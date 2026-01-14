@@ -41,7 +41,7 @@ python src/cli.py ask "What is this about?"
 
 Format: `MODULE_NAME | LEVEL | MESSAGE`
 
-Default level: `DEBUG`
+Default level: `INFO`
 
 ## License
 MIT
