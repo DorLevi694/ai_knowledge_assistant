@@ -3,12 +3,12 @@
 
 import os
 import logging
-from typing import List
+from typing import List, Dict
 
 logger = logging.getLogger(__name__)
 
 
-def read_files(paths: List[str]) -> None:
+def read_files(paths: List[str]) -> Dict[str, str]:
     logger.debug(f"read_files({paths})")
     file_paths = explore_files(paths)
     logger.info(f'file_paths: [\n\t{"\n\t".join(file_paths)}\n\t]')
@@ -19,8 +19,8 @@ def read_files(paths: List[str]) -> None:
         if file_content is not None:
             files_content[file_path] = file_content
 
-    for k, v in files_content.items():
-        print(f"{k:<60}: {v}")
+    # for k, v in files_content.items():
+    #     print(f"{k:<60}: {v}")
     return files_content
 
 
@@ -66,5 +66,6 @@ def read_file(file_path: str) -> str:
     if suffix in ["txt", "md"]:
         with open(file_path, "r", errors="ignore") as f:
             txt = f.read()
-
+    else:
+        return None
     return txt
