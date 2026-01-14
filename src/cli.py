@@ -19,7 +19,7 @@ def ask(question: str):
 
 def index(paths):
     logger.info(f"Indexing: {paths}")
-    # read_files(paths)
+    read_files(paths)
 
 
 def usage():
