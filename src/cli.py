@@ -1,6 +1,8 @@
 import sys
 import logging
+from typing import Dict, List
 from ingest.reader import read_files
+from normalize.chunker import split_into_chunks
 
 # from index import indexer
 # from ask import asker
@@ -19,7 +21,8 @@ def ask(question: str):
 
 def index(paths):
     logger.info(f"Indexing: {paths}")
-    read_files(paths)
+    text_by_file: Dict[str, str] = read_files(paths)
+    chunks: List[Dict] = split_into_chunks(text_by_file)
 
 
 def usage():
