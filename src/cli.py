@@ -2,14 +2,14 @@ import sys
 import logging
 from typing import Dict, List
 from ingest.reader import read_files
-from normalize.chunker import split_into_chunks
+from normalize.chunker import get_chunks_from_files
 
 # from index import indexer
 # from ask import asker
 
 # Configure logging for all modules
 logging.basicConfig(
-    level=logging.INFO, format="%(name)-20s | %(levelname)-8s | %(message)s"
+    level=logging.INFO, format="%(name)-20s | %(levelname)-8s: %(message)s"
 )
 
 logger = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ def ask(question: str):
 def index(paths):
     logger.info(f"Indexing: {paths}")
     text_by_file: Dict[str, str] = read_files(paths)
-    chunks: List[Dict] = split_into_chunks(text_by_file)
+    chunks: List[Dict] = get_chunks_from_files(text_by_file)
 
 
 def usage():
