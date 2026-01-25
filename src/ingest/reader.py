@@ -1,5 +1,4 @@
-# Build knowledge
-# Reader of files
+# reader.py file
 
 import os
 import logging

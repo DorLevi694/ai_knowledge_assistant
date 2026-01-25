@@ -1,10 +1,10 @@
+# chunker.py file
 import logging
 from typing import List, Dict, TypedDict
 
 logger = logging.getLogger(__name__)
 chunk_size = 500
 overlap_size = 100
-final_chunk_size = chunk_size - overlap_size
 
 
 class Chunk(TypedDict):
@@ -30,8 +30,8 @@ def split_into_chunks(file_name: str, text: str) -> List[Chunk]:
         {
             "source": file_name,
             "index": index,
-            "text": text[place : place + final_chunk_size],
+            "text": text[place : place + chunk_size],
         }
-        for index, place in enumerate(range(0, len(text), final_chunk_size))
+        for index, place in enumerate(range(0, len(text), (chunk_size - overlap_size)))
     ]
     return chunks

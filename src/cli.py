@@ -1,8 +1,12 @@
+# cli.py file
+
 import sys
 import logging
 from typing import Dict, List
+
 from ingest.reader import read_files
 from normalize.chunker import get_chunks_from_files
+from store.json_store import save_chunks
 
 # from index import indexer
 # from ask import asker
@@ -21,8 +25,10 @@ def ask(question: str):
 
 def index(paths):
     logger.info(f"Indexing: {paths}")
+
     text_by_file: Dict[str, str] = read_files(paths)
     chunks: List[Dict] = get_chunks_from_files(text_by_file)
+    file_store_data: str = save_chunks(chunks)
 
 
 def usage():
