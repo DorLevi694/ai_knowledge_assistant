@@ -3,7 +3,7 @@ import json
 from typing import List
 from normalize.chunker import Chunk
 
-INDEX_FILE = "index.json"
+INDEX_FILE = "data_set\output\index.json"
 
 
 def save_chunks(chunks: List[Chunk], path: str = INDEX_FILE) -> None:

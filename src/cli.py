@@ -28,7 +28,7 @@ def index(paths):
 
     text_by_file: Dict[str, str] = read_files(paths)
     chunks: List[Dict] = get_chunks_from_files(text_by_file)
-    file_store_data: str = save_chunks(chunks)
+    save_chunks(chunks)
 
 
 def usage():
