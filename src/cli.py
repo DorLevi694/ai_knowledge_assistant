@@ -5,8 +5,10 @@ import logging
 from typing import Dict, List
 
 from ingest.reader import read_files
-from normalize.chunker import get_chunks_from_files
-from store.json_store import save_chunks
+from normalize.chunker import Chunk, get_chunks_from_files
+from store.json_store import save_chunks, load_chunks
+
+from retrieve.naive import naive_search
 
 # from index import indexer
 # from ask import asker
@@ -21,6 +23,18 @@ logger = logging.getLogger(__name__)
 
 def ask(question: str):
     logger.info(f"Asking question: {question}")
+    chunks: List[Chunk] = load_chunks()
+    result: List[Chunk] = naive_search(query=question, chunks=chunks)
+    for index, chunk in enumerate(result):
+        print(
+            f"{index+1}: Source: {chunk['source']} | Index: {chunk['index']}\n{chunk['text']}"
+        )
+
+    # print("-" * 200)
+    # for c in result:
+    #     print("----- MATCH -----")
+    #     print(f"Source: {c['source']} | Index: {c['index']}")
+    #     print(c["text"])
 
 
 def index(paths):
