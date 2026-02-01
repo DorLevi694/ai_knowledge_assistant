@@ -4,12 +4,15 @@ import sys
 import logging
 from typing import Dict, List
 
+from embedding.builder import EmbeddedChunk, EmbeddingBuilder
 from ingest.reader import read_files
 from normalize.chunker import Chunk, get_chunks_from_files
 from store.json_store import save_chunks, load_chunks
+from store.vector_store import save_chunks_vectors, load_chunks_vectors
 
 from retrieve.naive import naive_search
 
+embeddingBuilder = EmbeddingBuilder()
 # from index import indexer
 # from ask import asker
 
@@ -41,8 +44,12 @@ def index(paths):
     logger.info(f"Indexing: {paths}")
 
     text_by_file: Dict[str, str] = read_files(paths)
-    chunks: List[Dict] = get_chunks_from_files(text_by_file)
+    chunks: List[Chunk] = get_chunks_from_files(text_by_file)
     save_chunks(chunks)
+    # Embedding Vectors
+    chunks_vectors: List[EmbeddedChunk] = embeddingBuilder.build_vectors(chunks)
+    save_chunks_vectors(chunks_vectors)
+
 
 
 def usage():
