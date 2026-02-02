@@ -13,22 +13,20 @@ CLI הוא העטיפה.
 
 ## 🧩 הפרקים (מפת־על קבועה + סטטוס)
 
-1. **Entry Point** — CLI ושלד
-2. **Ingestion** — קבצים → טקסט
-3. **Normalization** — טקסט → chunks
-4. **Knowledge Store v0** — JSON
-5. **Retrieval v0** — חיפוש נאיבי
-6. **Representation** — embeddings
-7. **Knowledge Store v1** — Vector DB
-8. **Retrieval v1** — semantic search
-9. **Reasoning** — RAG
-10. **Grounding** — מניעת הזיות
-11. **Interface** — CLI יציב
-12. **Maintainability** — ניקוי קוד
-13. **Productization** — README
-14. **Proof** — Demo
-
-
+- [x] 1. **Entry Point** — CLI ושלד
+- [x] 2. **Ingestion** — קבצים → טקסט
+- [x] 3. **Normalization** — טקסט → chunks
+- [x] 4. **Knowledge Store v0** — JSON
+- [x] 5. **Retrieval v0** — חיפוש נאיבי
+- [x] 6. **Representation** — embeddings
+- [ ] 7. **Knowledge Store v1** — Vector DB
+- [ ] 8. **Retrieval v1** — semantic search
+- [ ] 9. **Reasoning** — RAG
+- [ ] 10. **Grounding** — מניעת הזיות
+- [ ] 11. **Interface** — CLI יציב
+- [ ] 12. **Maintainability** — ניקוי קוד
+- [ ] 13. **Productization** — README
+- [ ] 14. **Proof** — Demo
 
 ## 🔥 Hits
 
