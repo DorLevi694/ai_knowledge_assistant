@@ -1,5 +1,3 @@
-## 🔥 Hits
-
 ## 🧠 HIGH LEVEL — תיאור הפרויקט (קבוע)
 
 **AI Knowledge Assistant לקבצים אישיים**
@@ -13,31 +11,24 @@ CLI הוא העטיפה.
 
 ---
 
-## 🧩 הפרקים (מפת־על קבועה)
+## 🧩 הפרקים (מפת־על קבועה + סטטוס)
 
-1. **Entry Point** — CLI ושלד
-2. **Ingestion** — קבצים → טקסט
-3. **Normalization** — טקסט → chunks
-4. **Knowledge Store v0** — JSON
-5. **Retrieval v0** — חיפוש נאיבי
-6. **Representation** — embeddings
-7. **Knowledge Store v1** — Vector DB
-8. **Retrieval v1** — semantic search
-9. **Reasoning** — RAG
-10. **Grounding** — מניעת הזיות
-11. **Interface** — CLI יציב
-12. **Maintainability** — ניקוי קוד
-13. **Productization** — README
-14. **Proof** — Demo
+- [ ] 1. **Entry Point** — CLI ושלד
+- [ ] 2. **Ingestion** — קבצים → טקסט
+- [ ] 3. **Normalization** — טקסט → chunks
+- [ ] 4. **Knowledge Store v0** — JSON
+- [ ] 5. **Retrieval v0** — חיפוש נאיבי
+- [ ] 6. **Representation** — embeddings
+- [ ] 7. **Knowledge Store v1** — Vector DB
+- [ ] 8. **Retrieval v1** — semantic search
+- [ ] 9. **Reasoning** — RAG
+- [ ] 10. **Grounding** — מניעת הזיות
+- [ ] 11. **Interface** — CLI יציב
+- [ ] 12. **Maintainability** — ניקוי קוד
+- [ ] 13. **Productization** — README
+- [ ] 14. **Proof** — Demo
 
 
-
-## 🔥 Hits
-
-אותה טבלה — שכבה אחת מעל.
-עכשיו אתה רואה **איך כל חלק משרת את המוצר**, לא רק מה כותבים.
-
----
 
 ## 🧠 HIGH-LEVEL MAP (לפני הטבלה)
 
@@ -93,7 +84,7 @@ CLI הוא העטיפה.
 * לדלג High-Level
 * “להבין הכול מראש”
 
-כל שורה = יום או יומיים. לא יותר.
+כל שורה = יום או יומיים (הערכה). לא יותר.
 
 ---
 
