@@ -7,6 +7,7 @@ from typing import Dict, List
 from embedding.builder import EmbeddedChunk, EmbeddingBuilder
 from ingest.reader import read_files
 from normalize.chunker import Chunk, get_chunks_from_files
+from store.faiss_store import FaissStore
 from store.json_store import save_chunks, load_chunks
 from store.vector_store import save_chunks_vectors, load_chunks_vectors
 
@@ -26,19 +27,27 @@ logger = logging.getLogger(__name__)
 
 def ask(question: str):
     logger.info(f"Asking question: {question}")
+
+
+    ''' 
+    # naive_search
     chunks: List[Chunk] = load_chunks()
     result: List[Chunk] = naive_search(query=question, chunks=chunks)
     for index, chunk in enumerate(result):
         print(
             f"{index+1}: Source: {chunk['source']} | Index: {chunk['index']}\n{chunk['text']}"
         )
-
-    # print("-" * 200)
-    # for c in result:
-    #     print("----- MATCH -----")
-    #     print(f"Source: {c['source']} | Index: {c['index']}")
-    #     print(c["text"])
-
+    '''
+    vectors_chunks: List[EmbeddedChunk] = load_chunks_vectors()
+    faiss_store = FaissStore(dim=384)
+    faiss_store.build(vectors_chunks)
+    embedding_builder = EmbeddingBuilder()
+    question_v = embedding_builder.model.encode(question).tolist()
+    
+    results = faiss_store.search(question_v,3)
+    for res in results:
+        print(f'{'*'* 20}\n{res['source']=}, {res['index']=}\n{res['text']=}\n{'*'* 20}')
+    return results
 
 def index(paths):
     logger.info(f"Indexing: {paths}")
@@ -46,10 +55,10 @@ def index(paths):
     text_by_file: Dict[str, str] = read_files(paths)
     chunks: List[Chunk] = get_chunks_from_files(text_by_file)
     save_chunks(chunks)
+
     # Embedding Vectors
     chunks_vectors: List[EmbeddedChunk] = embeddingBuilder.build_vectors(chunks)
     save_chunks_vectors(chunks_vectors)
-
 
 
 def usage():

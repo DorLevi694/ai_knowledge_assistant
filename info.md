@@ -19,7 +19,7 @@ CLI הוא העטיפה.
 - [x] 4. **Knowledge Store v0** — JSON
 - [x] 5. **Retrieval v0** — חיפוש נאיבי
 - [x] 6. **Representation** — embeddings
-- [ ] 7. **Knowledge Store v1** — Vector DB
+- [x] 7. **Knowledge Store v1** — Vector DB
 - [ ] 8. **Retrieval v1** — semantic search
 - [ ] 9. **Reasoning** — RAG
 - [ ] 10. **Grounding** — מניעת הזיות
