@@ -4,6 +4,10 @@ import faiss
 import numpy as np
 from typing import List
 from embedding.builder import EmbeddedChunk
+import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class FaissStore:
@@ -18,8 +22,25 @@ class FaissStore:
         self.index.add(vectors)
         self.items = chunks
 
-    def search(self, query_vector: List[float], k: int = 5) -> List[EmbeddedChunk]:
+    def search(
+        self, query_vector: List[float], k: int = 5, threshold=0.3
+    ) -> List[EmbeddedChunk]:
+        results = []
         q = np.array([query_vector]).astype("float32")
         faiss.normalize_L2(q)
         scores, indices = self.index.search(q, k)
-        return [self.items[i] for i in indices[0] if i != -1]
+        for score, indic in zip(scores[0], indices[0]):
+            if indic == -1:
+                continue
+            if score < threshold:
+                continue
+            results.append(
+                {
+                    "score": float(score),
+                    # "source": self.items[indic]["source"],
+                    # "index": self.items[indic]["index"],
+                    **self.items[indic],
+                }
+            )
+        logger.debug(json.dumps(results, indent=2, ensure_ascii=False))
+        return results

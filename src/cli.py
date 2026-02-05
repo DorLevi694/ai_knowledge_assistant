@@ -13,7 +13,7 @@ from store.vector_store import save_chunks_vectors, load_chunks_vectors
 
 from retrieve.naive import naive_search
 
-embeddingBuilder = EmbeddingBuilder()
+embedding_builder = EmbeddingBuilder()
 # from index import indexer
 # from ask import asker
 
@@ -28,8 +28,7 @@ logger = logging.getLogger(__name__)
 def ask(question: str):
     logger.info(f"Asking question: {question}")
 
-
-    ''' 
+    """ 
     # naive_search
     chunks: List[Chunk] = load_chunks()
     result: List[Chunk] = naive_search(query=question, chunks=chunks)
@@ -37,17 +36,18 @@ def ask(question: str):
         print(
             f"{index+1}: Source: {chunk['source']} | Index: {chunk['index']}\n{chunk['text']}"
         )
-    '''
+    """
     vectors_chunks: List[EmbeddedChunk] = load_chunks_vectors()
     faiss_store = FaissStore(dim=384)
     faiss_store.build(vectors_chunks)
-    embedding_builder = EmbeddingBuilder()
     question_v = embedding_builder.model.encode(question).tolist()
-    
-    results = faiss_store.search(question_v,3)
-    for res in results:
-        print(f'{'*'* 20}\n{res['source']=}, {res['index']=}\n{res['text']=}\n{'*'* 20}')
+
+    results: List[EmbeddedChunk] = faiss_store.search(question_v, 5)
+    # prompt: str = build_prompt(question, results)
+    # for res in results:
+    #     logger.debug(f'{'*'* 20}\n{res['source']=}, {res['index']=}\n{res['text']=}\n{'*'* 20}')
     return results
+
 
 def index(paths):
     logger.info(f"Indexing: {paths}")
@@ -57,7 +57,7 @@ def index(paths):
     save_chunks(chunks)
 
     # Embedding Vectors
-    chunks_vectors: List[EmbeddedChunk] = embeddingBuilder.build_vectors(chunks)
+    chunks_vectors: List[EmbeddedChunk] = embedding_builder.build_vectors(chunks)
     save_chunks_vectors(chunks_vectors)
 
 
