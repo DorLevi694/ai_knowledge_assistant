@@ -18,8 +18,6 @@ def read_files(paths: List[str]) -> Dict[str, str]:
         if file_content is not None:
             files_content[file_path] = file_content
 
-    # for k, v in files_content.items():
-    #     print(f"{k:<60}: {v}")
     return files_content
 
 
