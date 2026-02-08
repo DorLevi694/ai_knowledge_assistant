@@ -48,7 +48,7 @@ def explore_files(paths: List[str]) -> List[str]:
     return file_paths
 
 
-def read_file(file_path: str) -> str:
+def read_file(file_path: str) -> str | None:
 
     if not os.path.exists(file_path):
         logger.error(f"File {file_path} - Not exist")

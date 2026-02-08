@@ -7,9 +7,9 @@ from typing import Dict, List
 from embedding.builder import EmbeddedChunk, EmbeddingBuilder
 from ingest.reader import read_files
 from normalize.chunker import Chunk, get_chunks_from_files
-from store.faiss_store import FaissStore
+from retrieve.retriver import retrieve
 from store.json_store import save_chunks, load_chunks
-from store.vector_store import save_chunks_vectors, load_chunks_vectors
+from store.vector_store import save_chunks_vectors
 
 from retrieve.naive import naive_search
 
@@ -37,15 +37,9 @@ def ask(question: str):
             f"{index+1}: Source: {chunk['source']} | Index: {chunk['index']}\n{chunk['text']}"
         )
     """
-    vectors_chunks: List[EmbeddedChunk] = load_chunks_vectors()
-    faiss_store = FaissStore(dim=384)
-    faiss_store.build(vectors_chunks)
-    question_v = embedding_builder.model.encode(question).tolist()
-
-    results: List[EmbeddedChunk] = faiss_store.search(question_v, 5)
+    results = retrieve(question)
     # prompt: str = build_prompt(question, results)
-    # for res in results:
-    #     logger.debug(f'{'*'* 20}\n{res['source']=}, {res['index']=}\n{res['text']=}\n{'*'* 20}')
+
     return results
 
 
