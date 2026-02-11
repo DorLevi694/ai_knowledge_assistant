@@ -5,6 +5,7 @@ import logging
 from typing import Dict, List
 
 from embedding.builder import EmbeddedChunk, EmbeddingBuilder
+from grounding.answerability import AnswerabilityGate
 from ingest.reader import read_files
 from llm.base import LLMConfig
 from llm.openai_client import OpenAIClient
@@ -28,6 +29,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+# From cli.py
 def ask(question: str):
     logger.info(f"Asking question: {question}")
 
@@ -41,8 +43,12 @@ def ask(question: str):
         )
     """
     llm = OpenAIClient()
-
+    answer_ability_gate = AnswerabilityGate()
     results: List[ContextChunk] = retrieve(question)
+    if not answer_ability_gate.should_answer(results):
+        print("Insufficient_context")
+        return
+
     prompt: str = build_prompt(question, results)
     try:
         answer = llm.generate(
