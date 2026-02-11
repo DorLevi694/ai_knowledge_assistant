@@ -25,7 +25,6 @@ def get_chunks_from_files(text_by_file: Dict[str, str]) -> List[Chunk]:
 
 
 def split_into_chunks(file_name: str, text: str) -> List[Chunk]:
-    overlap_size
     chunks: List[Chunk] = [
         {
             "source": file_name,

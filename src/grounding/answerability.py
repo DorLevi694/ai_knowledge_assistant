@@ -2,13 +2,13 @@
 
 from typing import List
 
-from retrieve.retriver import ContextChunk
+from normalize.chunker import Chunk
 
 
 class AnswerabilityGate:
     MIN_TOTAL_CHARS = 800
 
-    def should_answer(self, context_chunks: List[ContextChunk]) -> bool:
+    def should_answer(self, context_chunks: List[Chunk]) -> bool:
         if len(context_chunks) < 1:
             return False
 
@@ -16,7 +16,3 @@ class AnswerabilityGate:
 
         total_chars_res = text_length > self.MIN_TOTAL_CHARS
         return total_chars_res
-
-
-        
-        
