@@ -1,4 +1,4 @@
-# cli.py file
+# src/cli.py file
 
 import sys
 import logging
@@ -6,6 +6,7 @@ from typing import Dict, List
 
 from embedding.builder import EmbeddedChunk, EmbeddingBuilder
 from grounding.answerability import AnswerabilityGate
+from grounding.output_validator import OutputValidator
 from ingest.reader import read_files
 from llm.base import LLMConfig
 from llm.openai_client import OpenAIClient
@@ -44,6 +45,7 @@ def ask(question: str):
     """
     llm = OpenAIClient()
     answer_ability_gate = AnswerabilityGate()
+    output_validator = OutputValidator()
     results: List[Chunk] = retrieve(question)
     if not answer_ability_gate.should_answer(results):
         print("Insufficient_context")
@@ -61,6 +63,10 @@ def ask(question: str):
         )
 
         # 4️⃣ Output
+        if not output_validator.validate(answer=answer, contexts=results):
+            print("WRONG_CONTEXT")
+            return
+
         print("\n=== ANSWER ===\n")
         print(answer)
     except Exception as e:

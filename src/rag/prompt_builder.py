@@ -2,7 +2,7 @@
 from typing import List
 
 from normalize.chunker import Chunk
-
+import os 
 
 def build_prompt(question: str, contexts: List[Chunk]) -> str:
 
@@ -23,7 +23,7 @@ def build_prompt(question: str, contexts: List[Chunk]) -> str:
         prompt_list.append("--- CONTEXT ---\n\n")
 
         for context in contexts:
-            filename = context["source"].split("\\")[-1]
+            filename = os.path.basename(context["source"])
             context_str = (
                 f"[Source: {filename}, chunk {context['index']}]\n{context['text']}\n\n"
             )
