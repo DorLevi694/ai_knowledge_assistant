@@ -15,12 +15,6 @@ embedding_builder = EmbeddingBuilder()
 _faiss_store = None
 
 
-class ContextChunk(TypedDict):
-    text: str
-    source: str
-    score: float
-
-
 def get_faiss_store() -> FaissStore:
     global _faiss_store
     if not _faiss_store:
@@ -31,25 +25,19 @@ def get_faiss_store() -> FaissStore:
     return _faiss_store
 
 
-def retrieve(question: str, limit: int = 5) -> List[ContextChunk]:
+def retrieve(question: str, limit: int = 5) -> List[Chunk]:
     """
     Returns context chunks ready for RAG
     """
     faiss_store = get_faiss_store()
 
     question_v = embedding_builder.model.encode(question).tolist()
-    fin: List[ContextChunk] = []
+    fin: List[Chunk] = []
     results: List[ScoredChunk] = faiss_store.search(question_v, limit)
     for res in results:
         fin.append(
-            {"source": res["source"], "score": res["score"], "text": res["text"]}
+            {"source": res["source"], "index": res["index"], "text": res["text"]}
         )
 
         logger.debug(f"{type(results[0])} - {results[0].keys()}")
     return fin
-    # print(f"{isEmbeddedChunks_1=}\n")
-
-    # for res in results:
-    #     logger.debug(
-    #         f"{'*'* 20}\n{res['source']=}, {res['index']=}\n{res['text']=}\n{'*'* 20}"
-    #     )

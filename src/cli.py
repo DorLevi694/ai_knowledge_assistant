@@ -1,15 +1,17 @@
-# cli.py file
+# src/cli.py file
 
 import sys
 import logging
 from typing import Dict, List
 
 from embedding.builder import EmbeddedChunk, EmbeddingBuilder
+from grounding.answerability import AnswerabilityGate
+from grounding.output_validator import OutputValidator
 from ingest.reader import read_files
 from llm.base import LLMConfig
 from llm.openai_client import OpenAIClient
 from normalize.chunker import Chunk, get_chunks_from_files
-from retrieve.retriver import ContextChunk, retrieve
+from retrieve.retriver import retrieve
 from rag.prompt_builder import build_prompt
 from store.json_store import save_chunks, load_chunks
 from store.vector_store import save_chunks_vectors
@@ -28,6 +30,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+# From cli.py
 def ask(question: str):
     logger.info(f"Asking question: {question}")
 
@@ -41,8 +44,13 @@ def ask(question: str):
         )
     """
     llm = OpenAIClient()
+    answer_ability_gate = AnswerabilityGate()
+    output_validator = OutputValidator()
+    results: List[Chunk] = retrieve(question)
+    if not answer_ability_gate.should_answer(results):
+        print("Insufficient_context")
+        return
 
-    results: List[ContextChunk] = retrieve(question)
     prompt: str = build_prompt(question, results)
     try:
         answer = llm.generate(
@@ -55,6 +63,10 @@ def ask(question: str):
         )
 
         # 4️⃣ Output
+        if not output_validator.validate(answer=answer, contexts=results):
+            print("WRONG_CONTEXT")
+            return
+
         print("\n=== ANSWER ===\n")
         print(answer)
     except Exception as e:
