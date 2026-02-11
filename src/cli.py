@@ -6,8 +6,11 @@ from typing import Dict, List
 
 from embedding.builder import EmbeddedChunk, EmbeddingBuilder
 from ingest.reader import read_files
+from llm.base import LLMConfig
+from llm.openai_client import OpenAIClient
 from normalize.chunker import Chunk, get_chunks_from_files
-from retrieve.retriver import retrieve
+from retrieve.retriver import ContextChunk, retrieve
+from rag.prompt_builder import build_prompt
 from store.json_store import save_chunks, load_chunks
 from store.vector_store import save_chunks_vectors
 
@@ -37,10 +40,25 @@ def ask(question: str):
             f"{index+1}: Source: {chunk['source']} | Index: {chunk['index']}\n{chunk['text']}"
         )
     """
-    results = retrieve(question)
-    # prompt: str = build_prompt(question, results)
+    llm = OpenAIClient()
 
-    return results
+    results: List[ContextChunk] = retrieve(question)
+    prompt: str = build_prompt(question, results)
+    try:
+        answer = llm.generate(
+            prompt,
+            config=LLMConfig(
+                model="gpt-5.2",
+                temperature=0.2,
+                max_output_tokens=600,
+            ),
+        )
+
+        # 4️⃣ Output
+        print("\n=== ANSWER ===\n")
+        print(answer)
+    except Exception as e:
+        print(f"Something went wrong: {e}")
 
 
 def index(paths):
