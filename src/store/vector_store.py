@@ -1,9 +1,10 @@
-# vector_store.py file
+# vector_store.py
+import os
 import json
 from typing import List
 from embedding.builder import EmbeddedChunk
 
-VECTORS_FILE = r"data_set\\output\\vectors.json"
+VECTORS_FILE = os.path.join("data_set", "output", "vectors.json")
 
 
 def save_chunks_vectors(chunks: List[EmbeddedChunk], path: str = VECTORS_FILE) -> None:
