@@ -24,7 +24,7 @@ from ingest.reader import read_files
 from llm.base import LLMConfig
 from llm.openai_client import OpenAIClient
 from normalize.chunker import Chunk, get_chunks_from_files
-from retrieve.retriver import retrieve
+from retrieve.retriever import retrieve
 from rag.prompt_builder import build_prompt
 from store.json_store import save_chunks
 from store.vector_store import save_chunks_vectors

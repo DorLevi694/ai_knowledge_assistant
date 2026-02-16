@@ -1,11 +1,10 @@
-# retrieve/naive.py
+# retrieve/retriever.py
 from typing import List, TypedDict
 from normalize.chunker import Chunk
 from embedding.builder import EmbeddedChunk, EmbeddingBuilder
 
 from store.faiss_store import FaissStore, ScoredChunk
 from store.vector_store import load_chunks_vectors
-from store.faiss_store import FaissStore
 import logging
 
 logger = logging.getLogger(__name__)
