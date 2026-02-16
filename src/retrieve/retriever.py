@@ -30,7 +30,7 @@ def retrieve(question: str, limit: int = 5) -> List[Chunk]:
     """
     faiss_store = get_faiss_store()
 
-    question_v = embedding_builder.model.encode(question).tolist()
+    question_v = embedding_builder.model.encode(question, show_progress_bar=False).tolist()
     fin: List[Chunk] = []
     results: List[ScoredChunk] = faiss_store.search(question_v, limit)
     for res in results:
