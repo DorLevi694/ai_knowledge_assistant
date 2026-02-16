@@ -1,21 +1,9 @@
-# src/cli.py file
-"""
-AI Knowledge Assistant CLI
+# src/cli.py — CLI orchestration layer
 
-A command-line interface for indexing documents and answering questions
-using semantic search and RAG (Retrieval-Augmented Generation).
-
-Usage:
-    python cli.py index <path1> [path2 ...]
-    python cli.py ask "<question>" [--verbose]
-    python cli.py --help
-    python cli.py --version
-"""
-
+import argparse
 import sys
 import logging
-import os
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 from embedding.builder import EmbeddedChunk, EmbeddingBuilder
 from grounding.answerability import AnswerabilityGate
@@ -29,361 +17,131 @@ from rag.prompt_builder import build_prompt
 from store.json_store import save_chunks
 from store.vector_store import save_chunks_vectors
 
-__version__ = "0.1.0"
-
-# Exit codes
-EXIT_SUCCESS = 0
-EXIT_USAGE_ERROR = 1
-EXIT_RUNTIME_ERROR = 2
-EXIT_NO_ANSWER = 3
-
-# Configure logging for all modules
-logging.basicConfig(
-    level=logging.INFO, format="%(name)-20s | %(levelname)-8s: %(message)s"
-)
-
 logger = logging.getLogger(__name__)
 
-# Global objects (singleton pattern)
-_embedding_builder: Optional[EmbeddingBuilder] = None
-_llm: Optional[OpenAIClient] = None
-_answer_ability_gate: Optional[AnswerabilityGate] = None
-_output_validator: Optional[OutputValidator] = None
+EXIT_OK = 0
+EXIT_USAGE_ERROR = 1
+EXIT_INSUFFICIENT_CONTEXT = 2
+EXIT_WRONG_CONTEXT = 3
+EXIT_LLM_ERROR = 4
 
 
-def _init_globals() -> bool:
-    """Initialize global objects safely. Returns True on success."""
-    global _embedding_builder, _llm, _answer_ability_gate, _output_validator
-    try:
-        logger.info("Initializing knowledge assistant...")
-        _embedding_builder = EmbeddingBuilder()
-        _llm = OpenAIClient()
-        _answer_ability_gate = AnswerabilityGate()
-        _output_validator = OutputValidator()
-        logger.info("✓ Initialization complete")
-        return True
-    except Exception as e:
-        logger.error(f"✗ Failed to initialize: {e}")
-        return False
+def _configure_logging(verbose: bool) -> None:
+    level = logging.DEBUG if verbose else logging.INFO
+    logging.basicConfig(
+        level=level,
+        format="%(name)-20s | %(levelname)-8s: %(message)s",
+    )
 
 
-def _get_embedding_builder() -> EmbeddingBuilder:
-    """Get or initialize the embedding builder."""
-    global _embedding_builder
-    if _embedding_builder is None:
-        _embedding_builder = EmbeddingBuilder()
-    return _embedding_builder
+def cmd_index(args: argparse.Namespace) -> int:
+    logger.info("Indexing: %s", args.paths)
 
-
-def _get_llm() -> OpenAIClient:
-    """Get or initialize the LLM client."""
-    global _llm
-    if _llm is None:
-        _llm = OpenAIClient()
-    return _llm
-
-
-def _get_answer_ability_gate() -> AnswerabilityGate:
-    """Get or initialize the answerability gate."""
-    global _answer_ability_gate
-    if _answer_ability_gate is None:
-        _answer_ability_gate = AnswerabilityGate()
-    return _answer_ability_gate
-
-
-def _get_output_validator() -> OutputValidator:
-    """Get or initialize the output validator."""
-    global _output_validator
-    if _output_validator is None:
-        _output_validator = OutputValidator()
-    return _output_validator
-
-
-def ask(question: str, verbose: bool = False) -> int:
-    """
-    Answer a question using the knowledge base.
-
-    Args:
-        question: The question to answer
-        verbose: If True, print additional context information
-
-    Returns:
-        Exit code (0 for success, non-zero for failure)
-    """
-    if not question or not question.strip():
-        logger.error("Question cannot be empty")
+    text_by_file: Dict[str, str] = read_files(args.paths)
+    if not text_by_file:
+        logger.error("No readable files found in the provided paths.")
         return EXIT_USAGE_ERROR
 
-    logger.info(f"Processing question: '{question}'")
+    chunks: List[Chunk] = get_chunks_from_files(text_by_file)
+    save_chunks(chunks)
+    logger.info("Saved %d chunks to index.", len(chunks))
+
+    embedding_builder = EmbeddingBuilder()
+    chunks_vectors: List[EmbeddedChunk] = embedding_builder.build_vectors(chunks)
+    save_chunks_vectors(chunks_vectors)
+    logger.info("Saved %d vectors.", len(chunks_vectors))
+
+    return EXIT_OK
+
+
+def cmd_ask(args: argparse.Namespace) -> int:
+    question: str = " ".join(args.question)
+    logger.info("Question: %s", question)
+
+    # 1. Retrieve context
+    results: List[Chunk] = retrieve(question, limit=args.limit)
+
+    # 2. Answerability gate
+    gate = AnswerabilityGate()
+    if not gate.should_answer(results):
+        print("INSUFFICIENT_CONTEXT")
+        return EXIT_INSUFFICIENT_CONTEXT
+
+    # 3. Generate answer
+    prompt: str = build_prompt(question, results)
+    llm = OpenAIClient()
+    config = LLMConfig(
+        model=args.model,
+        temperature=args.temperature,
+        max_output_tokens=args.max_tokens,
+    )
 
     try:
-        # Retrieve relevant chunks
-        logger.debug("Retrieving relevant chunks...")
-        results: List[Chunk] = retrieve(question)
+        answer: str = llm.generate(prompt, config=config)
+    except Exception as exc:
+        logger.error("LLM call failed: %s", exc)
+        return EXIT_LLM_ERROR
 
-        if not results:
-            logger.warning("No relevant documents found")
-            print("❌ No relevant documents found in knowledge base")
-            return EXIT_NO_ANSWER
+    # 4. Output validation
+    validator = OutputValidator()
+    if not validator.validate(answer=answer, contexts=results):
+        print("WRONG_CONTEXT")
+        return EXIT_WRONG_CONTEXT
 
-        if verbose:
-            logger.info(f"Retrieved {len(results)} relevant chunks")
-
-        # Check answerability
-        answer_gate = _get_answer_ability_gate()
-        if not answer_gate.should_answer(results):
-            logger.warning("Question deemed unanswerable based on available context")
-            print("❌ Insufficient context to answer this question")
-            return EXIT_NO_ANSWER
-
-        # Build and generate prompt
-        logger.debug("Building prompt...")
-        prompt: str = build_prompt(question, results)
-
-        llm_client = _get_llm()
-        logger.debug("Generating answer...")
-        answer = llm_client.generate(
-            prompt,
-            config=LLMConfig(
-                model="gpt-3.5-turbo",  # "gpt-5.2",
-                temperature=0.2,
-                max_output_tokens=600,
-            ),
-        )
-
-        # Validate output
-        output_validator = _get_output_validator()
-        if not output_validator.validate(answer=answer, contexts=results):
-            logger.warning("Generated answer failed validation")
-            print("⚠️  Warning: Answer may not be grounded in provided context")
-            # TODO: This is what I want? Continue anyway, but warn user
-
-        # Format and display answer
-        _print_answer(answer, results, verbose)
-        return EXIT_SUCCESS
-
-    except KeyError as e:
-        logger.error(f"Missing knowledge base: {e}")
-        print("❌ Error: Knowledge base not found. Run 'index' first.")
-        return EXIT_RUNTIME_ERROR
-    except Exception as e:
-        logger.error(f"Unexpected error while answering: {type(e).__name__}: {e}")
-        print(f"❌ Error: {e}")
-        return EXIT_RUNTIME_ERROR
-
-
-def _print_answer(answer: str, contexts: List[Chunk], verbose: bool) -> None:
-    """Format and print the answer with context."""
-    print("\n" + "=" * 60)
-    print("ANSWER")
-    print("=" * 60)
+    # 5. Print answer
+    print("\n=== ANSWER ===\n")
     print(answer)
-
-    if verbose and contexts:
-        print("\n" + "-" * 60)
-        print("SOURCES")
-        print("-" * 60)
-        for idx, chunk in enumerate(contexts, 1):
-            source = chunk.get("source", "Unknown")
-            chunk_idx = chunk.get("index", "N/A")
-            print(f"{idx}. {source} (chunk #{chunk_idx})")
-    print("=" * 60 + "\n")
+    return EXIT_OK
 
 
-def index(paths: List[str]) -> int:
-    """
-    Index documents from given paths.
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="ai-knowledge-assistant",
+        description="Index text files and ask questions with RAG.",
+    )
+    parser.add_argument(
+        "-v", "--verbose", action="store_true", help="Enable debug logging."
+    )
 
-    Args:
-        paths: List of file or directory paths to index
+    subparsers = parser.add_subparsers(dest="command", required=True)
 
-    Returns:
-        Exit code (0 for success, non-zero for failure)
-    """
-    if not paths:
-        logger.error("No paths provided for indexing")
-        return EXIT_USAGE_ERROR
+    # --- index ---
+    index_parser = subparsers.add_parser("index", help="Index files or directories.")
+    index_parser.add_argument(
+        "paths", nargs="+", help="One or more file or directory paths to index."
+    )
+    index_parser.set_defaults(func=cmd_index)
 
-    # Validate paths exist
-    for path in paths:
-        if not os.path.exists(path):
-            logger.error(f"Path not found: {path}")
-            print(f"❌ Error: Path not found: {path}")
-            return EXIT_USAGE_ERROR
+    # --- ask ---
+    ask_parser = subparsers.add_parser("ask", help="Ask a question.")
+    ask_parser.add_argument("question", nargs="+", help="The question to ask.")
+    ask_parser.add_argument(
+        "--limit", type=int, default=5,
+        help="Max context chunks to retrieve (default: 5).",
+    )
+    ask_parser.add_argument(
+        "--model", type=str, default="gpt-4.1",
+        help="OpenAI model name (default: gpt-4.1).",
+    )
+    ask_parser.add_argument(
+        "--temperature", type=float, default=0.2,
+        help="Sampling temperature (default: 0.2).",
+    )
+    ask_parser.add_argument(
+        "--max-tokens", type=int, default=600, dest="max_tokens",
+        help="Max output tokens (default: 600).",
+    )
+    ask_parser.set_defaults(func=cmd_ask)
 
-    logger.info(f"Indexing {len(paths)} path(s)...")
-
-    try:
-        # Read files
-        logger.debug(f"Reading files from {paths}...")
-        text_by_file: Dict[str, str] = read_files(paths)
-
-        if not text_by_file:
-            logger.warning("No text content found in provided paths")
-            print("⚠️  Warning: No text content found in provided paths")
-            return EXIT_RUNTIME_ERROR
-
-        logger.info(f"Read {len(text_by_file)} file(s)")
-
-        # Chunk text
-        logger.debug("Chunking text...")
-        chunks: List[Chunk] = get_chunks_from_files(text_by_file)
-        logger.info(f"Created {len(chunks)} chunk(s)")
-
-        # Save chunks to JSON
-        logger.debug("Saving chunks...")
-        save_chunks(chunks)
-
-        # Build and save embeddings
-        logger.debug("Building embeddings...")
-        embedding_builder = _get_embedding_builder()
-        chunks_vectors: List[EmbeddedChunk] = embedding_builder.build_vectors(chunks)
-        logger.info(f"Built embeddings for {len(chunks_vectors)} chunk(s)")
-
-        logger.debug("Saving vectors...")
-        save_chunks_vectors(chunks_vectors)
-
-        print(
-            f"✅ Successfully indexed {len(chunks)} chunks from {len(text_by_file)} file(s)"
-        )
-        logger.info("Indexing complete")
-        return EXIT_SUCCESS
-
-    except PermissionError as e:
-        logger.error(f"Permission denied while reading files: {e}")
-        print("❌ Error: Permission denied while reading files")
-        return EXIT_RUNTIME_ERROR
-    except Exception as e:
-        logger.error(f"Unexpected error during indexing: {type(e).__name__}: {e}")
-        print(f"❌ Error: {e}")
-        return EXIT_RUNTIME_ERROR
-
-
-def print_help() -> None:
-    """Print help message."""
-    help_text = f"""
-{"-" * 70}
-AI Knowledge Assistant v{__version__}
-{"-" * 70}
-
-A command-line tool for indexing documents and answering questions
-using semantic search and Retrieval-Augmented Generation (RAG).
-
-USAGE:
-  python cli.py index <path1> [path2 ...]
-    Index one or more files/directories into the knowledge base.
-
-  python cli.py ask "<question>" [--verbose]
-    Ask a question and get answers from the knowledge base.
-    Use --verbose to see source documents.
-
-  python cli.py --help
-    Show this help message.
-
-  python cli.py --version
-    Show version information.
-
-EXAMPLES:
-  # Index a single file
-  python cli.py index data/documents.txt
-
-  # Index multiple files
-  python cli.py index data/ more_data/
-
-  # Ask a question
-  python cli.py ask "What is machine learning?"
-
-  # Ask with verbose output
-  python cli.py ask "What is machine learning?" --verbose
-
-ENVIRONMENT:
-  API_KEY          OpenAI API key (required for ask command)
-
-EXIT CODES:
-  0  Success
-  1  Usage error
-  2  Runtime error
-  3  No answer found
-
-{"-" * 70}
-"""
-    print(help_text)
-
-
-def print_version() -> None:
-    """Print version information."""
-    print(f"AI Knowledge Assistant v{__version__}")
+    return parser
 
 
 def main() -> int:
-    """Main entry point. Returns exit code."""
-    args = sys.argv[1:]
-
-    # Handle no arguments
-    if not args:
-        print_help()
-        return EXIT_USAGE_ERROR
-
-    # Handle global flags
-    if args[0] in ["--help", "-h", "help"]:
-        print_help()
-        return EXIT_SUCCESS
-
-    if args[0] in ["--version", "-v", "version"]:
-        print_version()
-        return EXIT_SUCCESS
-
-    # Validate command
-    if args[0] not in ["index", "ask"]:
-        print(f"❌ Unknown command: '{args[0]}'")
-        print("Run 'python cli.py --help' for usage information")
-        return EXIT_USAGE_ERROR
-
-    # Require at least one more argument
-    if len(args) < 2:
-        print(f"❌ Command '{args[0]}' requires arguments")
-        print("Run 'python cli.py --help' for usage information")
-        return EXIT_USAGE_ERROR
-
-    command = args[0]
-
-    try:
-        if command == "index":
-            # index <path1> [path2 ...]
-            paths = args[1:]
-            return index(paths)
-
-        elif command == "ask":
-            # ask <question> [--verbose]
-            # Extract question and flags
-            question_parts = []
-            verbose = False
-
-            if "--verbose" in args[1:] or "-v" in args[1:]:
-                verbose = True
-                if "--verbose" == args[1]:
-                    question_parts = args[2:]
-                elif "-v" == args[-1]:
-                    question_parts = args[1:-1]
-
-            if not question_parts:
-                print("❌ Question cannot be empty")
-                return EXIT_USAGE_ERROR
-
-            question = " ".join(question_parts)
-            return ask(question, verbose=verbose)
-
-    except KeyboardInterrupt:
-        print("\n⚠️  Operation cancelled by user")
-        return EXIT_USAGE_ERROR
-    except Exception as e:
-        logger.error(f"Unexpected error: {type(e).__name__}: {e}")
-        print(f"❌ Unexpected error: {e}")
-        return EXIT_RUNTIME_ERROR
-
-    return EXIT_RUNTIME_ERROR
+    parser = build_parser()
+    args = parser.parse_args()
+    _configure_logging(args.verbose)
+    return args.func(args)
 
 
 if __name__ == "__main__":
-    exit_code = main()
-    sys.exit(exit_code)
+    sys.exit(main())
