@@ -4,7 +4,7 @@ from typing import Optional
 
 from openai import OpenAI
 
-from llm.base import LLMClient, LLMConfig
+from ai_knowledge_assistant.llm.base import LLMClient, LLMConfig
 
 
 class OpenAIClient(LLMClient):

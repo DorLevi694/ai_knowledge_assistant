@@ -1,10 +1,10 @@
 # retrieve/retriever.py
 from typing import List, TypedDict
-from normalize.chunker import Chunk
-from embedding.builder import EmbeddedChunk, EmbeddingBuilder
+from ai_knowledge_assistant.normalize.chunker import Chunk
+from ai_knowledge_assistant.embedding.builder import EmbeddedChunk, EmbeddingBuilder
 
-from store.faiss_store import FaissStore, ScoredChunk
-from store.vector_store import load_chunks_vectors
+from ai_knowledge_assistant.store.faiss_store import FaissStore, ScoredChunk
+from ai_knowledge_assistant.store.vector_store import load_chunks_vectors
 import logging
 
 logger = logging.getLogger(__name__)
@@ -30,7 +30,9 @@ def retrieve(question: str, limit: int = 5) -> List[Chunk]:
     """
     faiss_store = get_faiss_store()
 
-    question_v = embedding_builder.model.encode(question, show_progress_bar=False).tolist()
+    question_v = embedding_builder.model.encode(
+        question, show_progress_bar=False
+    ).tolist()
     fin: List[Chunk] = []
     results: List[ScoredChunk] = faiss_store.search(question_v, limit)
     for res in results:

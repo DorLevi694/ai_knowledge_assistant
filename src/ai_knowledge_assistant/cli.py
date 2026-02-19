@@ -5,17 +5,17 @@ import sys
 import logging
 from typing import Dict, List
 
-from embedding.builder import EmbeddedChunk, EmbeddingBuilder
-from grounding.answerability import AnswerabilityGate
-from grounding.output_validator import OutputValidator
-from ingest.reader import read_files
-from llm.base import LLMConfig
-from llm.openai_client import OpenAIClient
-from normalize.chunker import Chunk, get_chunks_from_files
-from retrieve.retriever import retrieve
-from rag.prompt_builder import build_prompt
-from store.json_store import save_chunks
-from store.vector_store import save_chunks_vectors
+from ai_knowledge_assistant.embedding.builder import EmbeddedChunk, EmbeddingBuilder
+from ai_knowledge_assistant.grounding.answerability import AnswerabilityGate
+from ai_knowledge_assistant.grounding.output_validator import OutputValidator
+from ai_knowledge_assistant.ingest.reader import read_files
+from ai_knowledge_assistant.llm.base import LLMConfig
+from ai_knowledge_assistant.llm.openai_client import OpenAIClient
+from ai_knowledge_assistant.normalize.chunker import Chunk, get_chunks_from_files
+from ai_knowledge_assistant.retrieve.retriever import retrieve
+from ai_knowledge_assistant.rag.prompt_builder import build_prompt
+from ai_knowledge_assistant.store.json_store import save_chunks
+from ai_knowledge_assistant.store.vector_store import save_chunks_vectors
 
 logger = logging.getLogger(__name__)
 
@@ -116,19 +116,28 @@ def build_parser() -> argparse.ArgumentParser:
     ask_parser = subparsers.add_parser("ask", help="Ask a question.")
     ask_parser.add_argument("question", nargs="+", help="The question to ask.")
     ask_parser.add_argument(
-        "--limit", type=int, default=5,
+        "--limit",
+        type=int,
+        default=5,
         help="Max context chunks to retrieve (default: 5).",
     )
     ask_parser.add_argument(
-        "--model", type=str, default="gpt-4.1",
+        "--model",
+        type=str,
+        default="gpt-4.1",
         help="OpenAI model name (default: gpt-4.1).",
     )
     ask_parser.add_argument(
-        "--temperature", type=float, default=0.2,
+        "--temperature",
+        type=float,
+        default=0.2,
         help="Sampling temperature (default: 0.2).",
     )
     ask_parser.add_argument(
-        "--max-tokens", type=int, default=600, dest="max_tokens",
+        "--max-tokens",
+        type=int,
+        default=600,
+        dest="max_tokens",
         help="Max output tokens (default: 600).",
     )
     ask_parser.set_defaults(func=cmd_ask)

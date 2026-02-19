@@ -5,7 +5,7 @@ from typing import List, TypedDict
 
 os.environ["TQDM_DISABLE"] = "1"  # Suppress tqdm progress bars
 
-from normalize.chunker import Chunk
+from ai_knowledge_assistant.normalize.chunker import Chunk
 from sentence_transformers import SentenceTransformer
 
 

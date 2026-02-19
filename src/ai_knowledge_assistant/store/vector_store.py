@@ -2,7 +2,7 @@
 import os
 import json
 from typing import List
-from embedding.builder import EmbeddedChunk
+from ai_knowledge_assistant.embedding.builder import EmbeddedChunk
 
 VECTORS_FILE = os.path.join("data_set", "output", "vectors.json")
 

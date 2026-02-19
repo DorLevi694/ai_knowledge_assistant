@@ -3,7 +3,7 @@
 import faiss
 import numpy as np
 from typing import List, TypedDict
-from embedding.builder import EmbeddedChunk
+from ai_knowledge_assistant.embedding.builder import EmbeddedChunk
 import json
 import logging
 

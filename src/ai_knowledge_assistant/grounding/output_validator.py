@@ -1,7 +1,7 @@
 # src/grounding/output_validator.py
 from typing import List
 
-from normalize.chunker import Chunk
+from ai_knowledge_assistant.normalize.chunker import Chunk
 import re
 import os
 
@@ -26,4 +26,3 @@ class OutputValidator:
         )
 
         return matches_set.issubset(contexts_set)
-

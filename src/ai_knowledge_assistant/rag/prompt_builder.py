@@ -1,8 +1,9 @@
 # src/rag/prompt_builder.py
 from typing import List
 
-from normalize.chunker import Chunk
-import os 
+from ai_knowledge_assistant.normalize.chunker import Chunk
+import os
+
 
 def build_prompt(question: str, contexts: List[Chunk]) -> str:
 

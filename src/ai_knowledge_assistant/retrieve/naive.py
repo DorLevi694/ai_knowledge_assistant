@@ -1,6 +1,7 @@
 # retrieve/naive.py
 from typing import List
-from normalize.chunker import Chunk
+from ai_knowledge_assistant.normalize.chunker import Chunk
+
 
 def naive_search(query: str, chunks: List[Chunk], limit: int = 5) -> List[Chunk]:
     query_lower = query.lower()

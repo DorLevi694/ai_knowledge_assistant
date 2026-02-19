@@ -2,7 +2,7 @@
 
 from typing import List
 
-from normalize.chunker import Chunk
+from ai_knowledge_assistant.normalize.chunker import Chunk
 
 
 class AnswerabilityGate:
