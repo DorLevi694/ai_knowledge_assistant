@@ -23,7 +23,7 @@ CLI הוא העטיפה.
 - [x] 8. **Retrieval v1** — semantic search
 - [x] 9. **Reasoning** — RAG
 - [x] 10. **Grounding** — מניעת הזיות
-- [ ] 11. **Interface** — CLI יציב
+- [x] 11. **Interface** — CLI יציב
 - [ ] 12. **Maintainability** — ניקוי קוד
 - [ ] 13. **Productization** — README
 - [ ] 14. **Proof** — Demo
