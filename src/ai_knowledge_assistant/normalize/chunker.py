@@ -1,16 +1,11 @@
-# chunker.py file
+# src\ai_knowledge_assistant\normalize\chunker.py file
 import logging
-from typing import List, Dict, TypedDict
+from typing import List, Dict
+
+from ai_knowledge_assistant.normalize.base import Chunk
+from ai_knowledge_assistant.config import CHUNK_SIZE, CHUNK_OVERLAP
 
 logger = logging.getLogger(__name__)
-chunk_size = 500
-overlap_size = 100
-
-
-class Chunk(TypedDict):
-    source: str
-    index: int
-    text: str
 
 
 def get_chunks_from_files(text_by_file: Dict[str, str]) -> List[Chunk]:
@@ -25,12 +20,21 @@ def get_chunks_from_files(text_by_file: Dict[str, str]) -> List[Chunk]:
 
 
 def split_into_chunks(file_name: str, text: str) -> List[Chunk]:
-    chunks: List[Chunk] = [
-        {
-            "source": file_name,
-            "index": index,
-            "text": text[place : place + chunk_size],
-        }
-        for index, place in enumerate(range(0, len(text), (chunk_size - overlap_size)))
+    """
+    Splits a single string into overlapping segments based on config values.
+    Returns a list of Chunk dataclasses.
+    """
+    chunks: List[Chunk] = []
+
+    # Calculate step size to ensure overlap
+    step = CHUNK_SIZE - CHUNK_OVERLAP
+
+    chunks = [
+        Chunk(
+            source=file_name,
+            index=index,
+            text=text[place : place + CHUNK_SIZE],
+        )
+        for index, place in enumerate(range(0, len(text), step))
     ]
     return chunks
