@@ -137,8 +137,7 @@ src/
     │   └── faiss_store.py      # FAISS index & cosine search
     ├── retrieve/
     │   ├── __init__.py
-    │   ├── retriever.py        # Semantic retrieval pipeline
-    │   └── naive.py            # Keyword-based fallback search
+    │   └── retriever.py        # Semantic retrieval pipeline
     ├── rag/
     │   ├── __init__.py
     │   └── prompt_builder.py   # Context → grounded prompt

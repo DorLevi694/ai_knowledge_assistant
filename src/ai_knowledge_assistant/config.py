@@ -22,11 +22,6 @@ MIN_TOTAL_CHARS = 800
 CITATION_PATTERN = r"\[Source:\s*(.*?),\s*chunk\s*(\d+)\]"
 
 
-# ---Retriever
-DEFAULT_RETRIEVAL_LIMIT = 5
-
-
-
 # --- Prompting & Logic ---
 INSUFFICIENT_CONTEXT_RESPONSE = "INSUFFICIENT_CONTEXT"
 
