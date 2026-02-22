@@ -1,4 +1,4 @@
-# src/cli.py — CLI orchestration layer
+# src/ai_knowledge_assistant/cli.py — CLI orchestration layer
 
 import argparse
 import sys
@@ -16,6 +16,7 @@ from ai_knowledge_assistant.retrieve.retriever import retrieve
 from ai_knowledge_assistant.rag.prompt_builder import build_prompt
 from ai_knowledge_assistant.store.json_store import save_chunks
 from ai_knowledge_assistant.store.vector_store import save_chunks_vectors
+import ai_knowledge_assistant.config as config
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +47,7 @@ def cmd_index(args: argparse.Namespace) -> int:
     save_chunks(chunks)
     logger.info("Saved %d chunks to index.", len(chunks))
 
-    embedding_builder = EmbeddingBuilder()
+    embedding_builder: EmbeddingBuilder = EmbeddingBuilder(config=config.DEFAULT_EMBEDDING)
     chunks_vectors: List[EmbeddedChunk] = embedding_builder.build_vectors(chunks)
     save_chunks_vectors(chunks_vectors)
     logger.info("Saved %d vectors.", len(chunks_vectors))
