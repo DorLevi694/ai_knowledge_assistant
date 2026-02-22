@@ -1,4 +1,4 @@
-# src/llm/openai_client.py
+# src/ai_knowledge_assistant/llm/openai_client.py file
 
 from typing import Optional
 

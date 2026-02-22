@@ -1,4 +1,4 @@
-# src/llm/base.py
+# src/ai_knowledge_assistant/llm/base.py file
 from __future__ import annotations
 
 from dataclasses import dataclass
