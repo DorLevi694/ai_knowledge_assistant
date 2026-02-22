@@ -131,8 +131,8 @@ def build_parser() -> argparse.ArgumentParser:
     ask_parser.add_argument(
         "--model",
         type=str,
-        default="gpt-4.1",
-        help="OpenAI model name (default: gpt-4.1).",
+        default=config.DEFAULT_LLM_MODEL,
+        help=f"OpenAI model name (default: {config.DEFAULT_LLM_MODEL}).",
     )
     ask_parser.add_argument(
         "--temperature",

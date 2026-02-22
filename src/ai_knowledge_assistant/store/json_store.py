@@ -39,4 +39,4 @@ def load_chunks(path: str) -> List[Chunk]:
         return []
     except Exception as e:
         logger.error("Failed to load chunks from %s: %s", path, e)
-        return []
+        raise

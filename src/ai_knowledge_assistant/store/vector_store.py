@@ -40,4 +40,4 @@ def load_chunks_vectors(path: str) -> List[EmbeddedChunk]:
         return []
     except Exception as e:
         logger.error("Failed to load vectors from %s: %s", path, e)
-        return []
+        raise

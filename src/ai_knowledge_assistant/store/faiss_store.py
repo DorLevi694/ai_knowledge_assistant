@@ -19,6 +19,10 @@ class FaissStore:
         self.items: List[EmbeddedChunk] = []
 
     def build(self, chunks: List[EmbeddedChunk]) -> None:
+        if not chunks:
+            logger.warning("build() called with an empty chunk list. Index will remain empty.")
+            return
+
         vectors = np.array([c.vector for c in chunks]).astype("float32")
         faiss.normalize_L2(vectors)  # cosine similarity
         self.index.add(vectors)  # type: ignore[call-arg]

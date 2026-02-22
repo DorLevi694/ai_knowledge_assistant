@@ -25,6 +25,9 @@ CITATION_PATTERN = r"\[Source:\s*(.*?),\s*chunk\s*(\d+)\]"
 # --- Prompting & Logic ---
 INSUFFICIENT_CONTEXT_RESPONSE = "INSUFFICIENT_CONTEXT"
 
+# --- LLM ---
+DEFAULT_LLM_MODEL = "gpt-4.1"
+
 # The visual example for the LLM must match CITATION_PATTERN
 CITATION_FORMAT_EXAMPLE = "[Source: <filename>, chunk <index>]"
 
@@ -40,6 +43,9 @@ PROMPT_SYSTEM_INSTRUCTIONS = (
 # --- Retrieval & Chunking ---
 CHUNK_SIZE = 500
 CHUNK_OVERLAP = 100
+
+# --- Ingest ---
+SUPPORTED_EXTENSIONS = ["txt", "md"]
 
 # Store
 INDEX_FILE = os.path.join("data_set", "output", "index.json")

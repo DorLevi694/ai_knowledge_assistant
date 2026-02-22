@@ -24,6 +24,11 @@ class Retriever:
         self._embedding_builder = EmbeddingBuilder(config=embedding_config)
 
         vectors_chunks: List[EmbeddedChunk] = load_chunks_vectors(path=vectors_path)
+        if not vectors_chunks:
+            raise FileNotFoundError(
+                f"No vectors found at '{vectors_path}'. Run the 'index' command first."
+            )
+
         self._faiss_store = FaissStore(dim=embedding_config.dimension)
         self._faiss_store.build(vectors_chunks)
 
