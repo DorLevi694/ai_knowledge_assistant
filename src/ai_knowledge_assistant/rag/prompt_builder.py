@@ -1,7 +1,9 @@
-# src/rag/prompt_builder.py
+# src/ai_knowledge_assistant/rag/prompt_builder.py file
+
 from typing import List
 
 from ai_knowledge_assistant.normalize.chunker import Chunk
+from ai_knowledge_assistant.config import PROMPT_SYSTEM_INSTRUCTIONS
 import os
 
 
@@ -10,23 +12,17 @@ def build_prompt(question: str, contexts: List[Chunk]) -> str:
     prompt_list: List[str] = []
 
     if contexts:
-        prompt_prefix = (
-            "You are an AI assistant answering questions based strictly on provided context.\n\n"
-            "You must follow these rules:\n\n"
-            "1. Use ONLY the provided context.\n"
-            "2. Do NOT use prior knowledge.\n"
-            "3. For every factual statement, cite the source in this format:\n"
-            "   [Source: <filename>, chunk <index>]\n"
-            "4. If the answer cannot be found in the context, respond exactly:\n"
-            "   INSUFFICIENT_CONTEXT\n\n"
-        )
-        prompt_list.append(prompt_prefix)
+        # Instruction Layer
+        prompt_list.append(PROMPT_SYSTEM_INSTRUCTIONS)
         prompt_list.append("--- CONTEXT ---\n\n")
 
+        # Context Layer
         for context in contexts:
-            filename = os.path.basename(context["source"])
+            filename = os.path.basename(context.source)
+
+            # Ensure the structure here matches the CITATION_PATTERN in config
             context_str = (
-                f"[Source: {filename}, chunk {context['index']}]\n{context['text']}\n\n"
+                f"[Source: {filename}, chunk {context.index}]\n{context.text}\n\n"
             )
             prompt_list.append(context_str)
 
