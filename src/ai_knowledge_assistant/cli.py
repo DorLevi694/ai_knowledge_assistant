@@ -1,21 +1,22 @@
-# src/cli.py — CLI orchestration layer
+# src/ai_knowledge_assistant/cli.py — CLI orchestration layer
 
 import argparse
 import sys
 import logging
 from typing import Dict, List
 
-from embedding.builder import EmbeddedChunk, EmbeddingBuilder
-from grounding.answerability import AnswerabilityGate
-from grounding.output_validator import OutputValidator
-from ingest.reader import read_files
-from llm.base import LLMConfig
-from llm.openai_client import OpenAIClient
-from normalize.chunker import Chunk, get_chunks_from_files
-from retrieve.retriever import retrieve
-from rag.prompt_builder import build_prompt
-from store.json_store import save_chunks
-from store.vector_store import save_chunks_vectors
+from ai_knowledge_assistant.embedding.builder import EmbeddedChunk, EmbeddingBuilder
+from ai_knowledge_assistant.grounding.answerability import AnswerabilityGate
+from ai_knowledge_assistant.grounding.output_validator import OutputValidator
+from ai_knowledge_assistant.ingest.reader import read_files
+from ai_knowledge_assistant.llm.base import LLMConfig
+from ai_knowledge_assistant.llm.openai_client import OpenAIClient
+from ai_knowledge_assistant.normalize.chunker import Chunk, get_chunks_from_files
+from ai_knowledge_assistant.retrieve.retriever import Retriever
+from ai_knowledge_assistant.rag.prompt_builder import build_prompt
+from ai_knowledge_assistant.store.json_store import save_chunks
+from ai_knowledge_assistant.store.vector_store import save_chunks_vectors
+import ai_knowledge_assistant.config as config
 
 logger = logging.getLogger(__name__)
 
@@ -43,12 +44,14 @@ def cmd_index(args: argparse.Namespace) -> int:
         return EXIT_USAGE_ERROR
 
     chunks: List[Chunk] = get_chunks_from_files(text_by_file)
-    save_chunks(chunks)
+    save_chunks(chunks, path=config.INDEX_FILE)
     logger.info("Saved %d chunks to index.", len(chunks))
 
-    embedding_builder = EmbeddingBuilder()
+    embedding_builder: EmbeddingBuilder = EmbeddingBuilder(
+        config=config.DEFAULT_EMBEDDING
+    )
     chunks_vectors: List[EmbeddedChunk] = embedding_builder.build_vectors(chunks)
-    save_chunks_vectors(chunks_vectors)
+    save_chunks_vectors(chunks_vectors, path=config.VECTORS_FILE)
     logger.info("Saved %d vectors.", len(chunks_vectors))
 
     return EXIT_OK
@@ -59,25 +62,29 @@ def cmd_ask(args: argparse.Namespace) -> int:
     logger.info("Question: %s", question)
 
     # 1. Retrieve context
-    results: List[Chunk] = retrieve(question, limit=args.limit)
+    retriever = Retriever(
+        embedding_config=config.DEFAULT_EMBEDDING,
+        vectors_path=config.VECTORS_FILE,
+    )
+    results: List[Chunk] = retriever.retrieve(question, limit=args.limit)
 
     # 2. Answerability gate
     gate = AnswerabilityGate()
     if not gate.should_answer(results):
-        print("INSUFFICIENT_CONTEXT")
+        logger.warning("Answerability gate rejected the query: INSUFFICIENT_CONTEXT")
         return EXIT_INSUFFICIENT_CONTEXT
 
     # 3. Generate answer
     prompt: str = build_prompt(question, results)
     llm = OpenAIClient()
-    config = LLMConfig(
+    llm_config = LLMConfig(
         model=args.model,
         temperature=args.temperature,
         max_output_tokens=args.max_tokens,
     )
 
     try:
-        answer: str = llm.generate(prompt, config=config)
+        answer: str = llm.generate(prompt, config=llm_config)
     except Exception as exc:
         logger.error("LLM call failed: %s", exc)
         return EXIT_LLM_ERROR
@@ -85,7 +92,7 @@ def cmd_ask(args: argparse.Namespace) -> int:
     # 4. Output validation
     validator = OutputValidator()
     if not validator.validate(answer=answer, contexts=results):
-        print("WRONG_CONTEXT")
+        logger.warning("Output validation failed: WRONG_CONTEXT")
         return EXIT_WRONG_CONTEXT
 
     # 5. Print answer
@@ -116,19 +123,28 @@ def build_parser() -> argparse.ArgumentParser:
     ask_parser = subparsers.add_parser("ask", help="Ask a question.")
     ask_parser.add_argument("question", nargs="+", help="The question to ask.")
     ask_parser.add_argument(
-        "--limit", type=int, default=5,
+        "--limit",
+        type=int,
+        default=5,
         help="Max context chunks to retrieve (default: 5).",
     )
     ask_parser.add_argument(
-        "--model", type=str, default="gpt-4.1",
-        help="OpenAI model name (default: gpt-4.1).",
+        "--model",
+        type=str,
+        default=config.DEFAULT_LLM_MODEL,
+        help=f"OpenAI model name (default: {config.DEFAULT_LLM_MODEL}).",
     )
     ask_parser.add_argument(
-        "--temperature", type=float, default=0.2,
+        "--temperature",
+        type=float,
+        default=0.2,
         help="Sampling temperature (default: 0.2).",
     )
     ask_parser.add_argument(
-        "--max-tokens", type=int, default=600, dest="max_tokens",
+        "--max-tokens",
+        type=int,
+        default=600,
+        dest="max_tokens",
         help="Max output tokens (default: 600).",
     )
     ask_parser.set_defaults(func=cmd_ask)

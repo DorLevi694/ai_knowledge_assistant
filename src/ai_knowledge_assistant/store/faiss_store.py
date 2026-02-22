@@ -1,21 +1,15 @@
-# file: faiss_store.py
-
+# src\ai_knowledge_assistant\store\faiss_store.py file
 import faiss
 import numpy as np
-from typing import List, TypedDict
-from embedding.builder import EmbeddedChunk
+from typing import List
 import json
 import logging
+from dataclasses import asdict
+
+from ai_knowledge_assistant.store.base import ScoredChunk
+from ai_knowledge_assistant.embedding.builder import EmbeddedChunk
 
 logger = logging.getLogger(__name__)
-
-
-class ScoredChunk(TypedDict):
-    source: str
-    index: int
-    text: str
-    vector: List[float]
-    score: float
 
 
 class FaissStore:
@@ -25,7 +19,11 @@ class FaissStore:
         self.items: List[EmbeddedChunk] = []
 
     def build(self, chunks: List[EmbeddedChunk]) -> None:
-        vectors = np.array([c["vector"] for c in chunks]).astype("float32")
+        if not chunks:
+            logger.warning("build() called with an empty chunk list. Index will remain empty.")
+            return
+
+        vectors = np.array([c.vector for c in chunks]).astype("float32")
         faiss.normalize_L2(vectors)  # cosine similarity
         self.index.add(vectors)  # type: ignore[call-arg]
         self.items: List[EmbeddedChunk] = chunks
@@ -45,14 +43,14 @@ class FaissStore:
                 continue
 
             results.append(
-                {
-                    "source": self.items[indic]["source"],
-                    "index": self.items[indic]["index"],
-                    "text": self.items[indic]["text"],
-                    "vector": self.items[indic]["vector"],
-                    "score": float(score),
-                }
+                ScoredChunk(
+                    source=self.items[indic].source,
+                    index=self.items[indic].index,
+                    text=self.items[indic].text,
+                    vector=self.items[indic].vector,
+                    score=float(score),
+                )
             )
-
-        logger.debug(json.dumps(results, indent=2, ensure_ascii=False))
+        scored_chunks_as_dicts = [asdict(scored_chunk) for scored_chunk in results]
+        logger.debug(json.dumps(scored_chunks_as_dicts, indent=2, ensure_ascii=False))
         return results

@@ -1,15 +1,16 @@
-# src/llm/openai_client.py
+# src/ai_knowledge_assistant/llm/openai_client.py file
 
 from typing import Optional
 
 from openai import OpenAI
 
-from llm.base import LLMClient, LLMConfig
+from ai_knowledge_assistant.llm.base import LLMClient, LLMConfig
+from ai_knowledge_assistant.config import DEFAULT_LLM_MODEL
 
 
 class OpenAIClient(LLMClient):
 
-    def __init__(self, api_key: Optional[str] = None, default_model: str = "gpt-5.2"):
+    def __init__(self, api_key: Optional[str] = None, default_model: str = DEFAULT_LLM_MODEL):
 
         self._client = OpenAI(api_key=api_key)
         self._default_model: str = default_model

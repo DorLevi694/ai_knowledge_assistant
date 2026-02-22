@@ -4,6 +4,8 @@ import os
 import logging
 from typing import List, Dict
 
+from ai_knowledge_assistant.config import SUPPORTED_EXTENSIONS
+
 logger = logging.getLogger(__name__)
 
 
@@ -60,7 +62,7 @@ def read_file(file_path: str) -> str | None:
 
     suffix = file_path.split(".")[-1]
 
-    if suffix in ["txt", "md"]:
+    if suffix in SUPPORTED_EXTENSIONS:
         with open(file_path, "r", errors="ignore") as f:
             txt = f.read()
     else:

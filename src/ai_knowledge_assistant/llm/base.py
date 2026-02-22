@@ -1,6 +1,7 @@
-# src/llm/base.py
+# src/ai_knowledge_assistant/llm/base.py file
 from __future__ import annotations
 
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Optional
 
@@ -12,6 +13,7 @@ class LLMConfig:
     temperature: float = 0.2
 
 
-class LLMClient:
+class LLMClient(ABC):
+    @abstractmethod
     def generate(self, prompt: str, *, config: Optional[LLMConfig] = None) -> str:
-        raise NotImplementedError
+        ...
