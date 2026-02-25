@@ -1,10 +1,10 @@
 # src/ai_knowledge_assistant/cli.py — CLI orchestration layer
 
 import argparse
-import sys
 import logging
-from typing import Dict, List
+import sys
 
+import ai_knowledge_assistant.config as config
 from ai_knowledge_assistant.embedding.builder import EmbeddedChunk, EmbeddingBuilder
 from ai_knowledge_assistant.grounding.answerability import AnswerabilityGate
 from ai_knowledge_assistant.grounding.output_validator import OutputValidator
@@ -12,11 +12,10 @@ from ai_knowledge_assistant.ingest.reader import read_files
 from ai_knowledge_assistant.llm.base import LLMConfig
 from ai_knowledge_assistant.llm.openai_client import OpenAIClient
 from ai_knowledge_assistant.normalize.chunker import Chunk, get_chunks_from_files
-from ai_knowledge_assistant.retrieve.retriever import Retriever
 from ai_knowledge_assistant.rag.prompt_builder import build_prompt
+from ai_knowledge_assistant.retrieve.retriever import Retriever
 from ai_knowledge_assistant.store.json_store import save_chunks
 from ai_knowledge_assistant.store.vector_store import save_chunks_vectors
-import ai_knowledge_assistant.config as config
 
 logger = logging.getLogger(__name__)
 
@@ -38,19 +37,19 @@ def _configure_logging(verbose: bool) -> None:
 def cmd_index(args: argparse.Namespace) -> int:
     logger.info("Indexing: %s", args.paths)
 
-    text_by_file: Dict[str, str] = read_files(args.paths)
+    text_by_file: dict[str, str] = read_files(args.paths)
     if not text_by_file:
         logger.error("No readable files found in the provided paths.")
         return EXIT_USAGE_ERROR
 
-    chunks: List[Chunk] = get_chunks_from_files(text_by_file)
+    chunks: list[Chunk] = get_chunks_from_files(text_by_file)
     save_chunks(chunks, path=config.INDEX_FILE)
     logger.info("Saved %d chunks to index.", len(chunks))
 
     embedding_builder: EmbeddingBuilder = EmbeddingBuilder(
         config=config.DEFAULT_EMBEDDING
     )
-    chunks_vectors: List[EmbeddedChunk] = embedding_builder.build_vectors(chunks)
+    chunks_vectors: list[EmbeddedChunk] = embedding_builder.build_vectors(chunks)
     save_chunks_vectors(chunks_vectors, path=config.VECTORS_FILE)
     logger.info("Saved %d vectors.", len(chunks_vectors))
 
@@ -66,7 +65,7 @@ def cmd_ask(args: argparse.Namespace) -> int:
         embedding_config=config.DEFAULT_EMBEDDING,
         vectors_path=config.VECTORS_FILE,
     )
-    results: List[Chunk] = retriever.retrieve(question, limit=args.limit)
+    results: list[Chunk] = retriever.retrieve(question, limit=args.limit)
 
     # 2. Answerability gate
     gate = AnswerabilityGate()

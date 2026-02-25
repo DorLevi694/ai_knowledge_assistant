@@ -1,15 +1,14 @@
 # reader.py file
 
-import os
 import logging
-from typing import List, Dict
+import os
 
 from ai_knowledge_assistant.config import SUPPORTED_EXTENSIONS
 
 logger = logging.getLogger(__name__)
 
 
-def read_files(paths: List[str]) -> Dict[str, str]:
+def read_files(paths: list[str]) -> dict[str, str]:
     logger.debug(f"read_files({paths})")
     file_paths = explore_files(paths)
     logger.info(f'file_paths: [\n\t{"\n\t".join(file_paths)}\n\t]')
@@ -23,7 +22,7 @@ def read_files(paths: List[str]) -> Dict[str, str]:
     return files_content
 
 
-def explore_files(paths: List[str]) -> List[str]:
+def explore_files(paths: list[str]) -> list[str]:
 
     file_paths = []
 
@@ -43,7 +42,7 @@ def explore_files(paths: List[str]) -> List[str]:
 
             logger.debug(f"{abs_path=}")
             logger.debug(f"{files_list=}")
-            logger.debug(f"{list(zip(files_list, full_paths))}")
+            logger.debug(f"{list(zip(files_list, full_paths, strict=True))}")
 
             file_paths.extend(explore_files(full_paths))
 
@@ -63,7 +62,7 @@ def read_file(file_path: str) -> str | None:
     suffix = file_path.split(".")[-1]
 
     if suffix in SUPPORTED_EXTENSIONS:
-        with open(file_path, "r", errors="ignore") as f:
+        with open(file_path, errors="ignore") as f:
             txt = f.read()
     else:
         return None

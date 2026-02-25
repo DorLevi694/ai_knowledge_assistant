@@ -3,7 +3,6 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass(frozen=True)
@@ -15,5 +14,4 @@ class LLMConfig:
 
 class LLMClient(ABC):
     @abstractmethod
-    def generate(self, prompt: str, *, config: Optional[LLMConfig] = None) -> str:
-        ...
+    def generate(self, prompt: str, *, config: LLMConfig | None = None) -> str: ...

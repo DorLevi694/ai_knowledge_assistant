@@ -1,15 +1,14 @@
 # src/ai_knowledge_assistant/rag/prompt_builder.py file
 
-from typing import List
-
-from ai_knowledge_assistant.normalize.chunker import Chunk
-from ai_knowledge_assistant.config import PROMPT_SYSTEM_INSTRUCTIONS
 import os
 
+from ai_knowledge_assistant.config import PROMPT_SYSTEM_INSTRUCTIONS
+from ai_knowledge_assistant.normalize.chunker import Chunk
 
-def build_prompt(question: str, contexts: List[Chunk]) -> str:
 
-    prompt_list: List[str] = []
+def build_prompt(question: str, contexts: list[Chunk]) -> str:
+
+    prompt_list: list[str] = []
 
     if contexts:
         # Instruction Layer

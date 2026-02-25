@@ -13,3 +13,25 @@ dependencies = [
 
 [project.scripts]
 ai-knowledge-assistant = "ai_knowledge_assistant.cli:main"
+
+[tool.black]
+line-length = 88
+target-version = ["py314"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py314"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort (import sorting)
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "SIM", # flake8-simplify
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["ai_knowledge_assistant"]

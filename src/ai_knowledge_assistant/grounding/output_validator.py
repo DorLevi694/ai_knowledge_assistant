@@ -1,10 +1,9 @@
 # src/ai_knowledge_assistant/grounding/output_validator.py
-from typing import List
-import re
 import os
+import re
 
-from ai_knowledge_assistant.normalize.chunker import Chunk
 from ai_knowledge_assistant.config import CITATION_PATTERN
+from ai_knowledge_assistant.normalize.chunker import Chunk
 
 
 class OutputValidator:
@@ -12,7 +11,7 @@ class OutputValidator:
     def __init__(self, pattern: str = CITATION_PATTERN):
         self._pattern = pattern
 
-    def validate(self, answer: str, contexts: List[Chunk]) -> bool:
+    def validate(self, answer: str, contexts: list[Chunk]) -> bool:
         """
         Verifies that every source cited in the answer actually exists
         in the provided context chunks.

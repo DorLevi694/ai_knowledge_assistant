@@ -1,9 +1,8 @@
 # src/ai_knowledge_assistant/grounding/answerability.py
 
-from typing import List
 
-from ai_knowledge_assistant.normalize.chunker import Chunk
 from ai_knowledge_assistant.config import MIN_TOTAL_CHARS
+from ai_knowledge_assistant.normalize.chunker import Chunk
 
 
 class AnswerabilityGate:
@@ -11,7 +10,7 @@ class AnswerabilityGate:
     def __init__(self, min_chars: int = MIN_TOTAL_CHARS):
         self._min_chars = min_chars
 
-    def should_answer(self, context_chunks: List[Chunk]) -> bool:
+    def should_answer(self, context_chunks: list[Chunk]) -> bool:
         """
         Determines if the provided context is substantial enough to
         generate a grounded answer.
