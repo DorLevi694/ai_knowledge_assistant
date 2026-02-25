@@ -2,14 +2,13 @@
 import json
 import logging
 from dataclasses import asdict
-from typing import List
 
 from ai_knowledge_assistant.embedding.base import EmbeddedChunk
 
 logger = logging.getLogger(__name__)
 
 
-def save_chunks_vectors(chunks: List[EmbeddedChunk], path: str) -> None:
+def save_chunks_vectors(chunks: list[EmbeddedChunk], path: str) -> None:
     """
     Serializes a list of EmbeddedChunk dataclasses to a JSON file.
     Converts dataclasses to dictionaries for JSON compatibility.
@@ -25,12 +24,12 @@ def save_chunks_vectors(chunks: List[EmbeddedChunk], path: str) -> None:
         raise
 
 
-def load_chunks_vectors(path: str) -> List[EmbeddedChunk]:
+def load_chunks_vectors(path: str) -> list[EmbeddedChunk]:
     """
     Loads vector chunks from JSON and deserializes them into EmbeddedChunk instances.
     """
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             data = json.load(f)
 
         return [EmbeddedChunk(**item) for item in data]

@@ -1,13 +1,13 @@
 # src\ai_knowledge_assistant\store\faiss_store.py file
-import faiss
-import numpy as np
-from typing import List
 import json
 import logging
 from dataclasses import asdict
 
-from ai_knowledge_assistant.store.base import ScoredChunk
+import faiss
+import numpy as np
+
 from ai_knowledge_assistant.embedding.builder import EmbeddedChunk
+from ai_knowledge_assistant.store.base import ScoredChunk
 
 logger = logging.getLogger(__name__)
 
@@ -16,26 +16,28 @@ class FaissStore:
     def __init__(self, dim: int):
         self.dim = dim
         self.index = faiss.IndexFlatIP(dim)  # Inner Product (cosine-ready)
-        self.items: List[EmbeddedChunk] = []
+        self.items: list[EmbeddedChunk] = []
 
-    def build(self, chunks: List[EmbeddedChunk]) -> None:
+    def build(self, chunks: list[EmbeddedChunk]) -> None:
         if not chunks:
-            logger.warning("build() called with an empty chunk list. Index will remain empty.")
+            logger.warning(
+                "build() called with an empty chunk list. Index will remain empty."
+            )
             return
 
         vectors = np.array([c.vector for c in chunks]).astype("float32")
         faiss.normalize_L2(vectors)  # cosine similarity
         self.index.add(vectors)  # type: ignore[call-arg]
-        self.items: List[EmbeddedChunk] = chunks
+        self.items: list[EmbeddedChunk] = chunks
 
     def search(
-        self, query_vector: List[float], k: int = 5, threshold=0.3
-    ) -> List[ScoredChunk]:
-        results: List[ScoredChunk] = []
+        self, query_vector: list[float], k: int = 5, threshold=0.3
+    ) -> list[ScoredChunk]:
+        results: list[ScoredChunk] = []
         q = np.array([query_vector]).astype("float32")
         faiss.normalize_L2(q)
         scores, indices = self.index.search(q, k)  # type: ignore[call-arg]
-        for score, indic in zip(scores[0], indices[0]):
+        for score, indic in zip(scores[0], indices[0], strict=True):
 
             if indic == -1:
                 continue
