@@ -35,3 +35,8 @@ select = [
 
 [tool.ruff.lint.isort]
 known-first-party = ["ai_knowledge_assistant"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-v --tb=short"
