@@ -6,6 +6,6 @@ from ai_knowledge_assistant.normalize.chunker import (
 
 __all__ = [
     "Chunk",
-    # "get_chunks_from_files",
+    "get_chunks_from_files",
     "split_into_chunks",
 ]
