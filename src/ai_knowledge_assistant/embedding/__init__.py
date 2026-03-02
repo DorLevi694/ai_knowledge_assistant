@@ -1,5 +1,5 @@
-from ai_knowledge_assistant.embedding.base import EmbeddedChunk, EmbeddingConfig
-from ai_knowledge_assistant.embedding.builder import EmbeddingBuilder
+from .base import EmbeddedChunk, EmbeddingConfig
+from .builder import EmbeddingBuilder
 
 __all__ = [
     "EmbeddedChunk",

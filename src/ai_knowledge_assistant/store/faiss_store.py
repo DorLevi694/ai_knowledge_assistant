@@ -6,8 +6,8 @@ from dataclasses import asdict
 import faiss
 import numpy as np
 
-from ai_knowledge_assistant.embedding.builder import EmbeddedChunk
-from ai_knowledge_assistant.store.base import ScoredChunk
+from ai_knowledge_assistant.embedding import EmbeddedChunk
+from .base import ScoredChunk
 
 logger = logging.getLogger(__name__)
 

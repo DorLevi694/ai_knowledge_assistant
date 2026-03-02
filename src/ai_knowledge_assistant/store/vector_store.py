@@ -3,7 +3,7 @@ import json
 import logging
 from dataclasses import asdict
 
-from ai_knowledge_assistant.embedding.base import EmbeddedChunk
+from ai_knowledge_assistant.embedding import EmbeddedChunk
 
 logger = logging.getLogger(__name__)
 

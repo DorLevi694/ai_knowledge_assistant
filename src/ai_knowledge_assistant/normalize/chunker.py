@@ -2,7 +2,8 @@
 import logging
 
 from ai_knowledge_assistant.config import CHUNK_OVERLAP, CHUNK_SIZE
-from ai_knowledge_assistant.normalize.base import Chunk
+
+from .base import Chunk
 
 logger = logging.getLogger(__name__)
 
