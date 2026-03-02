@@ -3,7 +3,7 @@ import json
 import logging
 from dataclasses import asdict
 
-from ai_knowledge_assistant.normalize.chunker import Chunk
+from ai_knowledge_assistant.normalize import Chunk
 
 logger = logging.getLogger(__name__)
 

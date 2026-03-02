@@ -1,10 +1,15 @@
+from __future__ import annotations
+
 import logging
 import os
+from typing import TYPE_CHECKING
 
 from sentence_transformers import SentenceTransformer
 
-from ai_knowledge_assistant.embedding.base import EmbeddedChunk, EmbeddingConfig
-from ai_knowledge_assistant.normalize.chunker import Chunk
+from .base import EmbeddedChunk, EmbeddingConfig
+
+if TYPE_CHECKING:
+    from ai_knowledge_assistant.normalize.base import Chunk
 
 
 class EmbeddingBuilder:

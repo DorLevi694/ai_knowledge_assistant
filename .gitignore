@@ -48,3 +48,7 @@ htmlcov/
 
 # OS
 Thumbs.db
+
+# Drive tmp
+*.tmp
+.tmp/

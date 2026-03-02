@@ -3,7 +3,7 @@
 import os
 
 from ai_knowledge_assistant.config import PROMPT_SYSTEM_INSTRUCTIONS
-from ai_knowledge_assistant.normalize.chunker import Chunk
+from ai_knowledge_assistant.normalize import Chunk
 
 
 def build_prompt(question: str, contexts: list[Chunk]) -> str:

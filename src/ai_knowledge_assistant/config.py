@@ -1,6 +1,6 @@
 import os
 
-from ai_knowledge_assistant.embedding.base import EmbeddingConfig
+from ai_knowledge_assistant.embedding import EmbeddingConfig
 
 # --- Embedding ---
 # Dictionary of supported models and their dimensions
