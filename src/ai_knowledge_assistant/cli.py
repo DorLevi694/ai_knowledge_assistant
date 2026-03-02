@@ -5,17 +5,14 @@ import logging
 import sys
 
 import ai_knowledge_assistant.config as config
-from ai_knowledge_assistant.embedding.builder import EmbeddedChunk, EmbeddingBuilder
-from ai_knowledge_assistant.grounding.answerability import AnswerabilityGate
-from ai_knowledge_assistant.grounding.output_validator import OutputValidator
-from ai_knowledge_assistant.ingest.reader import read_files
-from ai_knowledge_assistant.llm.base import LLMConfig
-from ai_knowledge_assistant.llm.openai_client import OpenAIClient
-from ai_knowledge_assistant.normalize.chunker import Chunk, get_chunks_from_files
-from ai_knowledge_assistant.rag.prompt_builder import build_prompt
-from ai_knowledge_assistant.retrieve.retriever import Retriever
-from ai_knowledge_assistant.store.json_store import save_chunks
-from ai_knowledge_assistant.store.vector_store import save_chunks_vectors
+from ai_knowledge_assistant.embedding import EmbeddedChunk, EmbeddingBuilder
+from ai_knowledge_assistant.grounding import AnswerabilityGate, OutputValidator
+from ai_knowledge_assistant.ingest import read_files
+from ai_knowledge_assistant.llm import LLMConfig, OpenAIClient
+from ai_knowledge_assistant.normalize import Chunk, get_chunks_from_files
+from ai_knowledge_assistant.rag import build_prompt
+from ai_knowledge_assistant.retrieve import Retriever
+from ai_knowledge_assistant.store import save_chunks, save_chunks_vectors
 
 logger = logging.getLogger(__name__)
 
