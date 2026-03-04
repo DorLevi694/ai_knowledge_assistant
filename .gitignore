@@ -52,3 +52,6 @@ Thumbs.db
 # Drive tmp
 *.tmp
 .tmp/
+
+# Ruff
+.ruff_cache
