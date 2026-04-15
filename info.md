@@ -24,9 +24,11 @@ CLI הוא העטיפה.
 - [x] 9. **Reasoning** — RAG
 - [x] 10. **Grounding** — מניעת הזיות
 - [x] 11. **Interface** — CLI יציב
-- [ ] 12. **Maintainability** — ניקוי קוד
-- [ ] 13. **Productization** — README
-- [ ] 14. **Proof** — Demo
+- [ ] 12. **Maintainability** — ניקוי קוד (#7 Store Refactor, #8 Ingestion Bugs, #12 Types & Liskov, #26 Cleanup output)
+- [ ] 13. **Productization** — README (#17) + Docstrings (#16) + LICENSE (#24)
+- [ ] 14. **Proof** — Demo (#18)
+- [ ] 15. **Infrastructure** — CI/CD (#22) + Tests (#23)
+- [ ] 16. **Deployment** — Docker (#25)
 
 ## 🔥 Hits
 
@@ -64,6 +66,8 @@ CLI הוא העטיפה.
 | 12  | Maintainability      | Refactor         | קוד קריא               | הפרדה לקבצים              | קוד נקי           |
 | 13  | Productization       | README           | שימוש ברור             | docs                      | משתמש מבין        |
 | 14  | Proof                | Demo             | הוכחה שזה עובד         | דוגמה מלאה                | ריצה מלאה         |
+| 15  | Infrastructure       | CI/CD + Tests    | איכות אוטומטית         | GitHub Actions + pytest   | badge ירוק        |
+| 16  | Deployment           | Docker           | הרצה בכל סביבה         | Dockerfile + compose      | clone & run       |
 
 ---
 
@@ -75,6 +79,7 @@ CLI הוא העטיפה.
 - 5–8 → אתה **שולף ידע**
 - 9–10 → אתה **חושב עם ידע**
 - 11–14 → אתה **מוכר מוצר**
+- 15–16 → אתה **מייצב ומפרס**
 
 אם אתה מנסה “לחשוב” לפני שיש לך ידע —
 אתה מקדים את עצמך.
