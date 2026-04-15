@@ -52,3 +52,10 @@ Thumbs.db
 # Drive tmp
 *.tmp
 .tmp/
+src/*.tmp.driveupload
+**/.tmp.driveupload/
+**/*.tmp.driveupload
+.tmp.driveupload
+
+# Ruff
+.ruff_cache

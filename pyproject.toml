@@ -7,6 +7,16 @@ name = "ai-knowledge-assistant"
 version = "0.1.0"
 description = "A CLI tool to index and query documents using AI."
 requires-python = ">=3.14"
+license = "MIT"
+readme = "README.md"
+authors = [
+    { name = "Dor Levi", email = "dorlevi694@gmail.com" },
+]
+
+[project.urls]
+Homepage = "https://github.com/DorLevi694/ai_knowledge_assistant"
+Repository = "https://github.com/DorLevi694/ai_knowledge_assistant"
+Issues = "https://github.com/DorLevi694/ai_knowledge_assistant/issues"
 
 dependencies = [
     "openai>=2.18.0,<3.0.0",
