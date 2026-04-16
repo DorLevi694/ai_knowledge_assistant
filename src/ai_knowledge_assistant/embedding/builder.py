@@ -2,14 +2,20 @@ from __future__ import annotations
 
 import logging
 import os
-from typing import TYPE_CHECKING
-
-from sentence_transformers import SentenceTransformer
+from typing import TYPE_CHECKING, Any, cast
 
 from .base import EmbeddedChunk, EmbeddingConfig
 
 if TYPE_CHECKING:
+    from sentence_transformers import SentenceTransformer
+
     from ai_knowledge_assistant.normalize.base import Chunk
+
+
+def _load_sentence_transformer() -> type[SentenceTransformer]:
+    from sentence_transformers import SentenceTransformer
+
+    return SentenceTransformer
 
 
 class EmbeddingBuilder:
@@ -31,7 +37,9 @@ class EmbeddingBuilder:
         if self._model is None:
             os.environ["TQDM_DISABLE"] = "1"
             logging.getLogger("transformers").setLevel(logging.ERROR)
-            self._model = SentenceTransformer(self._config.model_name)
+            sentence_transformer_cls:type[SentenceTransformer] = _load_sentence_transformer()
+            self._model = sentence_transformer_cls(self._config.model_name)
+        assert self._model is not None
         return self._model
 
     def build_vectors(self, chunks: list[Chunk]) -> list[EmbeddedChunk]:
