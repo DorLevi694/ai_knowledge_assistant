@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 def read_files(paths: list[str]) -> dict[str, str]:
     logger.debug(f"read_files({paths})")
     file_paths = explore_files(paths)
-    logger.info(f'file_paths: [\n\t{"\n\t".join(file_paths)}\n\t]')
+    logger.info(f"file_paths: [\n\t{'\n\t'.join(file_paths)}\n\t]")
 
     files_content = {}
     for file_path in file_paths:

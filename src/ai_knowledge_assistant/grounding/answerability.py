@@ -6,7 +6,6 @@ from ai_knowledge_assistant.normalize.chunker import Chunk
 
 
 class AnswerabilityGate:
-
     def __init__(self, min_chars: int = MIN_TOTAL_CHARS):
         self._min_chars = min_chars
 

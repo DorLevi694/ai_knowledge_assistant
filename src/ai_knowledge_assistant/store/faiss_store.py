@@ -38,7 +38,6 @@ class FaissStore:
         faiss.normalize_L2(q)
         scores, indices = self.index.search(q, k)  # type: ignore[call-arg]
         for score, indic in zip(scores[0], indices[0], strict=True):
-
             if indic == -1:
                 continue
             if score < threshold:

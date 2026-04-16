@@ -37,7 +37,9 @@ class EmbeddingBuilder:
         if self._model is None:
             os.environ["TQDM_DISABLE"] = "1"
             logging.getLogger("transformers").setLevel(logging.ERROR)
-            sentence_transformer_cls:type[SentenceTransformer] = _load_sentence_transformer()
+            sentence_transformer_cls: type[SentenceTransformer] = (
+                _load_sentence_transformer()
+            )
             self._model = sentence_transformer_cls(self._config.model_name)
         assert self._model is not None
         return self._model
