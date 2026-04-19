@@ -3,9 +3,9 @@
 import logging
 
 from ai_knowledge_assistant.embedding import (
-    EmbeddingConfig,
     EmbeddedChunk,
     EmbeddingBuilder,
+    EmbeddingConfig,
 )
 from ai_knowledge_assistant.normalize import Chunk
 from ai_knowledge_assistant.store import FaissStore, ScoredChunk, load_chunks_vectors

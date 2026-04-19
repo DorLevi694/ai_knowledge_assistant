@@ -10,5 +10,6 @@ def save_chunks(chunks: list[Chunk], path: str) -> None:
 
 
 def load_chunks(path: str) -> list[Chunk]:
-    """Loads chunks from a JSON file and converts them back into Chunk dataclass instances."""
+    """Loads chunks from a JSON file and converts them back into Chunk dataclass
+    instances."""
     return load_from_json(path, Chunk, label="chunks")

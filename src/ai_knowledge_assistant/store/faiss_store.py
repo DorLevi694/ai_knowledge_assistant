@@ -16,6 +16,7 @@ import faiss
 import numpy as np
 
 from ai_knowledge_assistant.embedding import EmbeddedChunk
+
 from .base import ScoredChunk
 
 logger = logging.getLogger(__name__)

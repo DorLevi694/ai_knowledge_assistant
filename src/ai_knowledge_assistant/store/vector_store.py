@@ -10,5 +10,6 @@ def save_chunks_vectors(chunks: list[EmbeddedChunk], path: str) -> None:
 
 
 def load_chunks_vectors(path: str) -> list[EmbeddedChunk]:
-    """Loads vector chunks from JSON and deserializes them into EmbeddedChunk instances."""
+    """Loads vector chunks from JSON and deserializes them into EmbeddedChunk
+    instances."""
     return load_from_json(path, EmbeddedChunk, label="vectors")
