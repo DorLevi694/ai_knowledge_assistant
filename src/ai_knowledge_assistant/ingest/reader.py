@@ -2,6 +2,7 @@
 
 import logging
 import os
+from pathlib import Path
 
 from ai_knowledge_assistant.config import SUPPORTED_EXTENSIONS
 
@@ -57,7 +58,7 @@ def read_file(file_path: str) -> str | None:
         logger.error(f"Path {file_path} - Isn't file")
         return None
 
-    suffix = file_path.split(".")[-1]
+    suffix = Path(file_path).suffix.lstrip(".")
 
     if suffix in SUPPORTED_EXTENSIONS:
         with open(file_path, errors="ignore") as f:

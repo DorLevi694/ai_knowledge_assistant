@@ -1,6 +1,6 @@
 import os
 
-from ai_knowledge_assistant.ingest.reader import explore_files
+from ai_knowledge_assistant.ingest.reader import explore_files, read_file
 
 
 def test_explore_files_single_path(tmp_path):
@@ -26,3 +26,21 @@ def test_explore_files_single_path(tmp_path):
 def test_explore_files_non_existent():
     result = explore_files(["/non/existent/path/at/all"])
     assert result == []
+
+
+def test_read_file_supported_extension(tmp_path):
+    f = tmp_path / "hello.txt"
+    f.write_text("some content")
+    assert read_file(str(f)) == "some content"
+
+
+def test_read_file_no_extension(tmp_path):
+    f = tmp_path / "noext"
+    f.write_text("data")
+    assert read_file(str(f)) is None
+
+
+def test_read_file_unsupported_extension(tmp_path):
+    f = tmp_path / "image.png"
+    f.write_bytes(b"\x89PNG")
+    assert read_file(str(f)) is None
