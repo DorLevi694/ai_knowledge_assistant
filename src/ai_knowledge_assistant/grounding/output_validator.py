@@ -7,7 +7,6 @@ from ai_knowledge_assistant.normalize.chunker import Chunk
 
 
 class OutputValidator:
-
     def __init__(self, pattern: str = CITATION_PATTERN):
         self._pattern = pattern
 

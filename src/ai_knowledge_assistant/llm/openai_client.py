@@ -8,7 +8,6 @@ from ai_knowledge_assistant.llm.base import LLMClient, LLMConfig
 
 
 class OpenAIClient(LLMClient):
-
     def __init__(
         self, api_key: str | None = None, default_model: str = DEFAULT_LLM_MODEL
     ):

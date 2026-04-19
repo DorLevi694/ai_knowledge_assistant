@@ -38,7 +38,6 @@ def load_from_json[T](path: str, cls: type[T], label: str = "items") -> list[T]:
 
 @dataclass(frozen=True)
 class ScoredChunk:
-
     source: str
     index: int
     text: str

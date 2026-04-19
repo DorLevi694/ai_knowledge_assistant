@@ -2,6 +2,7 @@
 
 import logging
 import os
+from pathlib import Path
 
 from ai_knowledge_assistant.config import SUPPORTED_EXTENSIONS
 
@@ -11,7 +12,7 @@ logger = logging.getLogger(__name__)
 def read_files(paths: list[str]) -> dict[str, str]:
     logger.debug(f"read_files({paths})")
     file_paths = explore_files(paths)
-    logger.info(f'file_paths: [\n\t{"\n\t".join(file_paths)}\n\t]')
+    logger.info(f"file_paths: [\n\t{'\n\t'.join(file_paths)}\n\t]")
 
     files_content = {}
     for file_path in file_paths:
@@ -24,7 +25,7 @@ def read_files(paths: list[str]) -> dict[str, str]:
 
 def explore_files(paths: list[str]) -> list[str]:
 
-    file_paths = []
+    file_paths: set[str] = set()
 
     for cur_path in paths:
         abs_path = os.path.abspath(cur_path)
@@ -34,19 +35,17 @@ def explore_files(paths: list[str]) -> list[str]:
 
         logger.debug(f"{abs_path:<80}: Exist")
         if os.path.isfile(abs_path):
-            file_paths.append(abs_path)
+            file_paths.add(abs_path)
 
         elif os.path.isdir(abs_path):
-            files_list = os.listdir(abs_path)
-            full_paths = [os.path.join(abs_path, file) for file in files_list]
+            for dirpath, _, filenames in os.walk(abs_path):
+                logger.debug(f"{dirpath=}")
+                logger.debug(f"{filenames=}")
+                for filename in filenames:
+                    full_path = os.path.join(dirpath, filename)
+                    file_paths.add(full_path)
 
-            logger.debug(f"{abs_path=}")
-            logger.debug(f"{files_list=}")
-            logger.debug(f"{list(zip(files_list, full_paths, strict=True))}")
-
-            file_paths.extend(explore_files(full_paths))
-
-    return file_paths
+    return sorted(file_paths)
 
 
 def read_file(file_path: str) -> str | None:
@@ -59,7 +58,7 @@ def read_file(file_path: str) -> str | None:
         logger.error(f"Path {file_path} - Isn't file")
         return None
 
-    suffix = file_path.split(".")[-1]
+    suffix = Path(file_path).suffix.lstrip(".")
 
     if suffix in SUPPORTED_EXTENSIONS:
         with open(file_path, errors="ignore") as f:

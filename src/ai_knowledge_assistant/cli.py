@@ -2,6 +2,7 @@
 
 import argparse
 import logging
+import os
 import sys
 
 import ai_knowledge_assistant.config as config
@@ -40,6 +41,8 @@ def cmd_index(args: argparse.Namespace) -> int:
         return EXIT_USAGE_ERROR
 
     chunks: list[Chunk] = get_chunks_from_files(text_by_file)
+
+    os.makedirs(os.path.dirname(config.INDEX_FILE), exist_ok=True)
     save_chunks(chunks, path=config.INDEX_FILE)
     logger.info("Saved %d chunks to index.", len(chunks))
 
