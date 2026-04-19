@@ -1,3 +1,16 @@
+"""File ingestion utilities for reading text documents from disk.
+
+Provides two public helpers:
+- ``read_files`` – accepts a list of file/directory paths and returns a
+  mapping of absolute file path → raw text content for every supported file
+  that was found.
+- ``explore_files`` – walks paths recursively and returns the sorted list of
+  all discovered absolute file paths.
+
+Only file extensions listed in ``config.SUPPORTED_EXTENSIONS`` are read;
+unsupported files are silently skipped.
+"""
+
 # reader.py file
 
 import logging
@@ -10,6 +23,16 @@ logger = logging.getLogger(__name__)
 
 
 def read_files(paths: list[str]) -> dict[str, str]:
+    """Read all supported files found under the given paths.
+
+    Args:
+        paths: A list of file or directory paths to search. Directories are
+            walked recursively.
+
+    Returns:
+        A dict mapping each absolute file path to its text content.  Files
+        that cannot be read or whose extension is not supported are excluded.
+    """
     logger.debug(f"read_files({paths})")
     file_paths = explore_files(paths)
     logger.info(f"file_paths: [\n\t{'\n\t'.join(file_paths)}\n\t]")
@@ -24,6 +47,18 @@ def read_files(paths: list[str]) -> dict[str, str]:
 
 
 def explore_files(paths: list[str]) -> list[str]:
+    """Resolve a mixed list of files and directories to absolute file paths.
+
+    Each entry in *paths* is resolved to its absolute form.  Missing paths are
+    logged as errors and skipped.  Directories are walked recursively; all
+    files encountered (regardless of extension) are included in the result.
+
+    Args:
+        paths: A list of file or directory paths (relative or absolute).
+
+    Returns:
+        A sorted list of unique absolute file paths.
+    """
 
     file_paths: set[str] = set()
 
@@ -49,6 +84,19 @@ def explore_files(paths: list[str]) -> list[str]:
 
 
 def read_file(file_path: str) -> str | None:
+    """Read a single file and return its contents as a string.
+
+    Only files whose extension appears in ``config.SUPPORTED_EXTENSIONS`` are
+    read.  Any file that does not exist, is not a regular file, or has an
+    unsupported extension returns ``None``.
+
+    Args:
+        file_path: Absolute or relative path to the file.
+
+    Returns:
+        The file's text content, or ``None`` if the file could not or should
+        not be read.
+    """
 
     if not os.path.exists(file_path):
         logger.error(f"File {file_path} - Not exist")

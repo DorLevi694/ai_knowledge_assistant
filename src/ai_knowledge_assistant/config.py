@@ -1,3 +1,12 @@
+"""
+Central configuration module for the AI Knowledge Assistant.
+
+Defines application-wide constants covering embedding models, LLM settings,
+retrieval/chunking parameters, grounding thresholds, and file-store paths.
+All tuneable values should be changed here rather than inline throughout the
+codebase.
+"""
+
 import os
 
 from ai_knowledge_assistant.embedding import EmbeddingConfig

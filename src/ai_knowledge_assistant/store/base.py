@@ -1,3 +1,13 @@
+"""Base types and shared persistence utilities for the store layer.
+
+Provides:
+- :func:`save_to_json` – serialize a list of dataclasses to a JSON file.
+- :func:`load_from_json` – deserialize a JSON file back into typed dataclass
+  instances.
+- :class:`ScoredChunk` – immutable dataclass representing a retrieved chunk
+  together with its similarity score.
+"""
+
 # ai_knowledge_assistant\store\base.py
 import json
 import logging
@@ -38,6 +48,16 @@ def load_from_json[T](path: str, cls: type[T], label: str = "items") -> list[T]:
 
 @dataclass(frozen=True)
 class ScoredChunk:
+    """A document chunk annotated with a retrieval similarity score.
+
+    Attributes:
+        source: The file name or path the chunk was extracted from.
+        index: Zero-based position of this chunk within its source document.
+        text: The raw text content of the chunk.
+        score: Cosine-similarity score (0-1) assigned by the vector store.
+        vector: Optional embedding vector; may be ``None`` when not needed.
+    """
+
     source: str
     index: int
     text: str

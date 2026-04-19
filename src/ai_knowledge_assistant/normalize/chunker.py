@@ -1,3 +1,13 @@
+"""Text chunking utilities for splitting documents into overlapping segments.
+
+This module provides:
+- ``get_chunks_from_files`` – batch-splits a dict of file contents into
+  :class:`~normalize.base.Chunk` objects.
+- ``split_into_chunks`` – splits a single document string into overlapping
+  fixed-size chunks using the ``CHUNK_SIZE`` and ``CHUNK_OVERLAP`` settings
+  defined in :mod:`config`.
+"""
+
 # src\ai_knowledge_assistant\normalize\chunker.py file
 import logging
 
@@ -9,6 +19,20 @@ logger = logging.getLogger(__name__)
 
 
 def get_chunks_from_files(text_by_file: dict[str, str]) -> list[Chunk]:
+    """Chunk all files in the provided mapping.
+
+    Iterates over each (filename, text) pair, delegates chunking to
+    :func:`split_into_chunks`, and concatenates the results into a single
+    flat list.
+
+    Args:
+        text_by_file: A dict mapping file names (or paths) to their raw text
+            content.
+
+    Returns:
+        A flat list of :class:`~normalize.base.Chunk` objects ordered by
+        file then by chunk index.
+    """
 
     results: list[Chunk] = []
     for file_name, text in text_by_file.items():
