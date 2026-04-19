@@ -24,7 +24,7 @@ def read_files(paths: list[str]) -> dict[str, str]:
 
 def explore_files(paths: list[str]) -> list[str]:
 
-    file_paths = []
+    file_paths: set[str] = set()
 
     for cur_path in paths:
         abs_path = os.path.abspath(cur_path)
@@ -34,19 +34,17 @@ def explore_files(paths: list[str]) -> list[str]:
 
         logger.debug(f"{abs_path:<80}: Exist")
         if os.path.isfile(abs_path):
-            file_paths.append(abs_path)
+            file_paths.add(abs_path)
 
         elif os.path.isdir(abs_path):
-            files_list = os.listdir(abs_path)
-            full_paths = [os.path.join(abs_path, file) for file in files_list]
+            for dirpath, _, filenames in os.walk(abs_path):
+                logger.debug(f"{dirpath=}")
+                logger.debug(f"{filenames=}")
+                for filename in filenames:
+                    full_path = os.path.join(dirpath, filename)
+                    file_paths.add(full_path)
 
-            logger.debug(f"{abs_path=}")
-            logger.debug(f"{files_list=}")
-            logger.debug(f"{list(zip(files_list, full_paths, strict=True))}")
-
-            file_paths.extend(explore_files(full_paths))
-
-    return file_paths
+    return sorted(file_paths)
 
 
 def read_file(file_path: str) -> str | None:
