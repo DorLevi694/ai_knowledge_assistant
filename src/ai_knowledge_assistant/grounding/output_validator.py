@@ -16,13 +16,13 @@ class OutputValidator:
         in the provided context chunks.
         """
         matches = re.findall(self._pattern, answer)
-        matches_set: set = set(matches)
+        matches_set: set[tuple[str, str]] = set(matches)
 
         if not matches_set:
             return False
 
         # Build a set of valid (filename, index) pairs from retrieved contexts
-        contexts_set: set = set(
+        contexts_set: set[tuple[str, str]] = set(
             [
                 (os.path.basename(context.source), str(context.index))
                 for context in contexts

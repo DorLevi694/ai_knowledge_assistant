@@ -6,7 +6,7 @@ from dataclasses import asdict, dataclass
 logger = logging.getLogger(__name__)
 
 
-def save_to_json(items: list, path: str, label: str = "items") -> None:
+def save_to_json[T](items: list[T], path: str, label: str = "items") -> None:
     """Serializes a list of dataclasses to a JSON file."""
     try:
         items_as_dicts = [asdict(item) for item in items]
