@@ -28,10 +28,10 @@ class FaissStore:
         vectors = np.array([c.vector for c in chunks]).astype("float32")
         faiss.normalize_L2(vectors)  # cosine similarity
         self.index.add(vectors)  # type: ignore[call-arg]
-        self.items: list[EmbeddedChunk] = chunks
+        self.items = chunks
 
     def search(
-        self, query_vector: list[float], k: int = 5, threshold=0.3
+        self, query_vector: list[float], k: int = 5, threshold: float = 0.3
     ) -> list[ScoredChunk]:
         results: list[ScoredChunk] = []
         q = np.array([query_vector]).astype("float32")

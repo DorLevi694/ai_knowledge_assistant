@@ -15,7 +15,7 @@ class OpenAIClient(LLMClient):
         self._client = OpenAI(api_key=api_key)
         self._default_model: str = default_model
 
-    def generate(self, prompt: str, *, config: LLMConfig | None) -> str:
+    def generate(self, prompt: str, *, config: LLMConfig | None = None) -> str:
 
         cfg = config or LLMConfig(model=self._default_model)
 
