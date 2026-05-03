@@ -9,13 +9,14 @@ from ai_knowledge_assistant.normalize.chunker import Chunk
 class OutputValidator:
     def __init__(self, pattern: str = CITATION_PATTERN):
         self._pattern = pattern
+        self._citation_fragment_pattern = r"Source:\s*([^,\];]+),\s*chunk\s*(\d+)"
 
     def validate(self, answer: str, contexts: list[Chunk]) -> bool:
         """
         Verifies that every source cited in the answer actually exists
         in the provided context chunks.
         """
-        matches = re.findall(self._pattern, answer)
+        matches = re.findall(self._citation_fragment_pattern, answer)
         matches_set: set[tuple[str, str]] = set(matches)
 
         if not matches_set:

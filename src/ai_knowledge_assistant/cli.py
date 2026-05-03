@@ -88,6 +88,10 @@ def cmd_ask(args: argparse.Namespace) -> int:
         logger.error("LLM call failed: %s", exc)
         return EXIT_LLM_ERROR
 
+    if answer == config.INSUFFICIENT_CONTEXT_RESPONSE:
+        logger.warning("LLM returned INSUFFICIENT_CONTEXT")
+        return EXIT_INSUFFICIENT_CONTEXT
+
     # 4. Output validation
     validator = OutputValidator()
     if not validator.validate(answer=answer, contexts=results):
@@ -124,8 +128,8 @@ def build_parser() -> argparse.ArgumentParser:
     ask_parser.add_argument(
         "--limit",
         type=int,
-        default=5,
-        help="Max context chunks to retrieve (default: 5).",
+        default=10,
+        help="Max context chunks to retrieve (default: 10).",
     )
     ask_parser.add_argument(
         "--model",
