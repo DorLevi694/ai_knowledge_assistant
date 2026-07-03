@@ -19,6 +19,7 @@ def test_split_into_chunks_basic(monkeypatch):
     assert chunks[0].index == 0
     assert chunks[1].index == 1
     assert chunks[0].source == "test.txt"
+    assert chunks[1].source == "test.txt"
 
 
 def test_split_into_chunks_small_text(monkeypatch):
@@ -29,3 +30,5 @@ def test_split_into_chunks_small_text(monkeypatch):
     chunks = split_into_chunks("small.txt", text)
     assert len(chunks) == 1
     assert chunks[0].text == "small"
+    assert chunks[0].source == "small.txt"
+    assert chunks[0].index == 0

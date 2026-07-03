@@ -1,3 +1,4 @@
+from ai_knowledge_assistant.config import PROMPT_SYSTEM_INSTRUCTIONS
 from ai_knowledge_assistant.normalize.chunker import Chunk
 from ai_knowledge_assistant.rag.prompt_builder import build_prompt
 
@@ -17,6 +18,7 @@ def test_build_prompt_with_context():
     assert "[Source: recipe.txt, chunk 0]" in prompt
     assert "[Source: recipe.txt, chunk 1]" in prompt
     assert "--- CONTEXT ---" in prompt
+    assert PROMPT_SYSTEM_INSTRUCTIONS in prompt
 
 
 def test_build_prompt_no_context():

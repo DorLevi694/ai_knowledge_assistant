@@ -32,3 +32,5 @@ def test_cmd_index_creates_output_dir(
 
     assert result == 0
     assert os.path.isdir(str(tmp_path / "sub"))
+    mock_save.assert_called_once()
+    mock_save_vec.assert_called_once()
