@@ -1,4 +1,5 @@
 import subprocess
+import sys
 
 import pytest
 
@@ -13,7 +14,7 @@ def test_full_workflow():
     # Step 1: Indexing
     print("\nRunning Step 1: Indexing...")
     index_cmd = [
-        "python",
+        sys.executable,
         "-m",
         "ai_knowledge_assistant.cli",
         "index",
@@ -32,7 +33,7 @@ def test_full_workflow():
     # Step 2: Asking
     print("\nRunning Step 2: Asking...")
     ask_cmd = [
-        "python",
+        sys.executable,
         "-m",
         "ai_knowledge_assistant.cli",
         "ask",
