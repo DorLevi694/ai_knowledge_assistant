@@ -48,6 +48,8 @@ PROMPT_SYSTEM_INSTRUCTIONS = (
     "2. Do NOT use prior knowledge.\n"
     "3. For every factual statement, cite the source in this exact format: "
     f"{CITATION_FORMAT_EXAMPLE}\n"
+    "   Use one separate bracket per source. Never combine multiple sources "
+    "in a single bracket (e.g. do NOT use semicolons inside brackets).\n"
     "4. If the answer cannot be found in the context, respond exactly: "
     f"{INSUFFICIENT_CONTEXT_RESPONSE}\n\n"
 )

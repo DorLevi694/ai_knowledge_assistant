@@ -13,11 +13,10 @@ authors = [
     { name = "Dor Levi", email = "dorlevi694@gmail.com" }
     ]
 dependencies = [
-    "openai>=2.18.0,<3.0.0",
-    "sentence-transformers>=5.2.2,<6.0.0",
-    "faiss-cpu>=1.13.2,<2.0.0", 
-    "numpy>=2.4.2,<3.0.0",
-    "scipy>=1.0.0"
+    "faiss-cpu>=1.13.2",
+    "numpy>=2.4.4",
+    "openai>=2.33.0",
+    "sentence-transformers>=5.4.1",
 ]
 
 [project.urls]
@@ -53,3 +52,9 @@ known-first-party = ["ai_knowledge_assistant"]
 testpaths = ["tests"]
 pythonpath = ["src"]
 addopts = "-v --tb=short"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.3",
+    "ruff>=0.15.0",
+]
