@@ -7,10 +7,16 @@ Positive questions  — the answer EXISTS in orlit_company.txt  → expect exit 
 Negative questions  — the answer does NOT exist anywhere       → expect exit 2
 """
 
+import os
 import subprocess
 import sys
 
 import pytest
+
+pytestmark = pytest.mark.skipif(
+    not os.environ.get("OPENAI_API_KEY"),
+    reason="OPENAI_API_KEY not set; these tests call the real OpenAI API",
+)
 
 
 @pytest.fixture(scope="module", autouse=True)
