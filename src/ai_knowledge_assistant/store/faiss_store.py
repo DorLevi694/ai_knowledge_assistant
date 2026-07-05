@@ -15,6 +15,7 @@ from dataclasses import asdict
 import faiss
 import numpy as np
 
+from ai_knowledge_assistant.config import MIN_SIMILARITY_THRESHOLD
 from ai_knowledge_assistant.embedding import EmbeddedChunk
 
 from .base import ScoredChunk
@@ -65,7 +66,10 @@ class FaissStore:
         self.items = chunks
 
     def search(
-        self, query_vector: list[float], k: int = 5, threshold: float = 0.3
+        self,
+        query_vector: list[float],
+        k: int = 5,
+        threshold: float = MIN_SIMILARITY_THRESHOLD,
     ) -> list[ScoredChunk]:
         """Return the top-*k* chunks most similar to the query vector.
 

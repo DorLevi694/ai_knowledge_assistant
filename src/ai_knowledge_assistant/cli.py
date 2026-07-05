@@ -30,6 +30,9 @@ def _configure_logging(verbose: bool) -> None:
         level=level,
         format="%(name)-20s | %(levelname)-8s: %(message)s",
     )
+    if not verbose:
+        for noisy in ("httpx", "httpcore", "sentence_transformers", "transformers"):
+            logging.getLogger(noisy).setLevel(logging.WARNING)
 
 
 def cmd_index(args: argparse.Namespace) -> int:
