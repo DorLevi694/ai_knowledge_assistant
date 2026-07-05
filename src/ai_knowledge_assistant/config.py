@@ -10,6 +10,7 @@ codebase.
 import os
 
 from ai_knowledge_assistant.embedding import EmbeddingConfig
+
 # --- Embedding ---
 # Dictionary of supported models and their dimensions
 SUPPORTED_EMBEDDING_MODELS: dict[str, int] = {
