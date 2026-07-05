@@ -10,16 +10,17 @@ codebase.
 import os
 
 from ai_knowledge_assistant.embedding import EmbeddingConfig
-
 # --- Embedding ---
 # Dictionary of supported models and their dimensions
 SUPPORTED_EMBEDDING_MODELS: dict[str, int] = {
     "all-MiniLM-L6-v2": 384,
     "all-mpnet-base-v2": 768,
+    # "paraphrase-multilingual-MiniLM-L12-v2": 384,
 }
 
 
 DEFAULT_EMBEDDING = EmbeddingConfig(
+    # model_name="paraphrase-multilingual-MiniLM-L12-v2",
     model_name="all-MiniLM-L6-v2",
     dimension=384,
 )
@@ -57,6 +58,7 @@ PROMPT_SYSTEM_INSTRUCTIONS = (
 # --- Retrieval & Chunking ---
 CHUNK_SIZE = 500
 CHUNK_OVERLAP = 100
+MIN_SIMILARITY_THRESHOLD = 0.2
 
 # --- Ingest ---
 SUPPORTED_EXTENSIONS = [
