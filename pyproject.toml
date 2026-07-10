@@ -17,6 +17,7 @@ dependencies = [
     "fastapi>=0.139.0",
     "numpy>=2.4.4",
     "openai>=2.33.0",
+    "python-multipart>=0.0.32",
     "sentence-transformers>=5.4.1",
     "uvicorn>=0.50.0",
 ]
