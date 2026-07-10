@@ -1,3 +1,4 @@
+from collections.abc import Mapping
 from enum import StrEnum, auto
 
 from pydantic import BaseModel
@@ -11,7 +12,6 @@ class ReadFileStatus(StrEnum):
 class ReadFileReasonFailed(StrEnum):
     UNSUPPORTED_FILE = auto()
     MISSING_FILENAME = auto()
-    FAIL_TO_SAVE = auto()
     UNKNOWN_ISSUE = auto()
     EMPTY_FILE = auto()
     DECODE_FAILED = auto()
@@ -24,7 +24,7 @@ class FileResponseBase(BaseModel):
 
 
 class IngestResponseBase(BaseModel):
-    files: dict[str, FileResponseBase]
+    files: Mapping[str, FileResponseBase]
 
 
 # internal - not part of the API response
