@@ -19,6 +19,10 @@ dependencies = [
     "openai>=2.33.0",
     "python-multipart>=0.0.32",
     "sentence-transformers>=5.4.1",
+    # Our code never imports torch directly; sentence-transformers brings it in.
+    # It is listed here because [tool.uv.sources] below only applies to
+    # direct dependencies.
+    "torch>=2.11.0",
     "uvicorn>=0.50.0",
 ]
 
@@ -61,3 +65,15 @@ dev = [
     "pytest>=9.0.3",
     "ruff>=0.15.0",
 ]
+
+# Get torch from PyTorch's CPU-only wheel index instead of PyPI: the default
+# PyPI wheels drag the ~4.5 GB CUDA/GPU stack into our GPU-less Docker image.
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+
+# The index definition itself. `explicit = true` means uv may use this index
+# only for packages pinned to it above — never for anything else.
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true

@@ -1,4 +1,0 @@
-# Install the package and all its dependencies from pyproject.toml.
-# This file exists for tooling compatibility (e.g. CI, Docker).
-# The single source of truth for dependencies is pyproject.toml.
-.
