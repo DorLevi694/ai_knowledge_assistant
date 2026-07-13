@@ -24,6 +24,7 @@ Files → Text → Chunks → Embeddings → Vector Store → Retrieval → Answ
 ## Prerequisites
 
 - Python 3.14+
+- [uv](https://docs.astral.sh/uv/) (project and dependency manager)
 - An [OpenAI API key](https://platform.openai.com/api-keys)
 
 ## Installation
@@ -31,10 +32,12 @@ Files → Text → Chunks → Embeddings → Vector Store → Retrieval → Answ
 ```bash
 git clone https://github.com/DorLevi694/ai_knowledge_assistant.git
 cd ai_knowledge_assistant
-python -m venv .venv
+uv sync
 ```
 
-Activate the virtual environment:
+`uv sync` creates `.venv` and installs the exact dependency versions locked in `uv.lock`.
+
+Activate the virtual environment (or prefix any command below with `uv run` instead):
 
 ```powershell
 # Windows (PowerShell)
@@ -46,11 +49,10 @@ Activate the virtual environment:
 source .venv/bin/activate
 ```
 
-Install dependencies:
+Installing without uv also works — plain pip against `pyproject.toml`:
 
 ```bash
-python -m pip install --upgrade pip
-pip install -r requirements.txt
+pip install .
 ```
 
 ## Configuration
